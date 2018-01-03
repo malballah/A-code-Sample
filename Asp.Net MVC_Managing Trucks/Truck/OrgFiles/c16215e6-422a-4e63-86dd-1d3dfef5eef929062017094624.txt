@@ -1,0 +1,5 @@
+update reportcomponent set ReportId =
+(select id from report where report.ReportQueryId = reportcomponent.Id)
+
+update reportcomponent set ReportId =
+(select id from report where report.ReportTemplateId = reportcomponent.Id)

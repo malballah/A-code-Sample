@@ -1,0 +1,8 @@
+alter table report add ScheduleType int null
+alter table report add StartDate datetime null
+alter table report add RepeatByType int null
+alter table report add RepeatEvery int null
+alter table report add RepeatEndDate datetime null
+alter table report add RepeatDays varchar(200)
+alter table report add Recipients varchar(1000)
+

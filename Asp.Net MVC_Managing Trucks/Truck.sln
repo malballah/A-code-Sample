@@ -1,0 +1,67 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Truck.Web", "Truck\Truck.Web.csproj", "{190D396C-A07A-4794-8205-2BED41B21076}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Truck.Tests", "Truck.Tests\Truck.Tests.csproj", "{45D34736-2385-4662-9A45-C8CAE3650B93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Truck.Core", "Truck.Core\Truck.Core.csproj", "{5FF3A9B4-7A54-42C1-98D1-9B1C297D0DBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Truck.Services", "Truck.Services\Truck.Services.csproj", "{9AA9ED77-6634-4D9D-875E-7CA7748BA09E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Truck.Data", "Truck.Data\Truck.Data.csproj", "{32F02CB3-679A-480F-B036-895744B15EDB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{190D396C-A07A-4794-8205-2BED41B21076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{190D396C-A07A-4794-8205-2BED41B21076}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{190D396C-A07A-4794-8205-2BED41B21076}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{190D396C-A07A-4794-8205-2BED41B21076}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45D34736-2385-4662-9A45-C8CAE3650B93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45D34736-2385-4662-9A45-C8CAE3650B93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45D34736-2385-4662-9A45-C8CAE3650B93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45D34736-2385-4662-9A45-C8CAE3650B93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FF3A9B4-7A54-42C1-98D1-9B1C297D0DBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FF3A9B4-7A54-42C1-98D1-9B1C297D0DBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FF3A9B4-7A54-42C1-98D1-9B1C297D0DBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FF3A9B4-7A54-42C1-98D1-9B1C297D0DBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AA9ED77-6634-4D9D-875E-7CA7748BA09E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AA9ED77-6634-4D9D-875E-7CA7748BA09E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AA9ED77-6634-4D9D-875E-7CA7748BA09E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AA9ED77-6634-4D9D-875E-7CA7748BA09E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32F02CB3-679A-480F-B036-895744B15EDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32F02CB3-679A-480F-B036-895744B15EDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32F02CB3-679A-480F-B036-895744B15EDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32F02CB3-679A-480F-B036-895744B15EDB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://rusyus.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Truck.Tests\\Truck.Tests.csproj
+		SccProjectName1 = Truck.Tests
+		SccLocalPath1 = Truck.Tests
+		SccProjectUniqueName2 = Truck.Core\\Truck.Core.csproj
+		SccProjectName2 = Truck.Core
+		SccLocalPath2 = Truck.Core
+		SccProjectUniqueName3 = Truck.Services\\Truck.Services.csproj
+		SccProjectName3 = Truck.Services
+		SccLocalPath3 = Truck.Services
+		SccProjectUniqueName4 = Truck.Data\\Truck.Data.csproj
+		SccProjectName4 = Truck.Data
+		SccLocalPath4 = Truck.Data
+		SccProjectUniqueName5 = Truck\\Truck.Web.csproj
+		SccProjectName5 = Truck
+		SccLocalPath5 = Truck
+	EndGlobalSection
+EndGlobal

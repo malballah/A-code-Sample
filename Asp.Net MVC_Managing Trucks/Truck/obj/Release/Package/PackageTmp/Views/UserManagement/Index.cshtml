@@ -1,0 +1,132 @@
+﻿<div class="page">
+    <h3 class="title">User Management</h3>
+    <table id="users-grid" class="table table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th data-column-id="id" data-type="numeric" data-visible="false" data-identifier="true" data-selection="true" selection="true">id</th>
+                <th data-column-id="name">Name</th>
+                <th data-column-id="customerName" data-formatter="checkbox">Customer</th>
+                <th data-column-id="email">Email</th>
+                <th data-column-id="phoneNumber">Phone Number</th>
+                <th data-column-id="userId">User ID</th>
+                
+                <th data-column-id="commands" data-formatter="commands" data-sortable="false" data-width="60"></th>
+            </tr>
+        </thead>
+      
+    </table>
+
+    <div id="editModal" class="modal fade" tabindex="-1" role="dialog">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="pull-left" id="title">CreateUser</h3>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button class="btn btn-primary" id="btnSave" onclick="saveUser()">Save</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="deleteModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Are you sure want to delete this user?</p>
+                    <div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnConfirmDelete" onclick="processDeleteUser()">Yes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        var currentUserId = null;
+        var usersGrid = null;
+        $(function() {
+            usersGrid = $("#users-grid").bootgrid({
+                ajax: true,
+                url: "@Url.Action("GetUsers","UserManagement")",
+                columnSettings: true,
+                sorting: true,
+                templates: { header: bootGrid.getHeaderWithNew() },
+                formatters: {
+                    "commands": function (column, row) {
+                        return bootGrid.getEditDeleteCommand(row.id);
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function () {
+                usersGrid.find(".command-edit").off().on("click", function () {
+                    var id = $(this).attr("data-row-id");
+                    editUser(id);
+                    return false;
+                }).end().find(".command-delete").off().on("click", function () {
+                    var id = $(this).attr("data-row-id");
+                    deleteUser(id);
+
+                }).end().parent().find(".command-new").off().on("click", function () {
+                    createUser();
+                });
+            });
+            //acions
+            function editUser(id) {
+                $.get('@Url.Action("Edit","UserManagement")' + "/" + id).done(function(html) {
+                    $("#editModal .modal-body").html(html);
+                    $("#editModal #title").text("Edit User");
+                    $("#editModal").modal("show");
+                    $("#editForm").validate();
+                });
+            }
+            function createUser() {
+                $.get('@Url.Action("Edit","UserManagement")' ).done(function (html) {
+                    $("#editModal .modal-body").html(html);
+                    $("#editModal #title").text("Create User");
+                    $("#editModal").modal("show");
+                    $("#editForm").validate();
+                });
+            }
+            function deleteUser(id) {
+                currentUserId = id;
+                $("#deleteModal").modal("show");
+            }
+        });
+
+        function saveUser() {
+                if (!$("#editForm").valid())
+                    return;
+                $.post('@Url.Action("Edit","UserManagement")', $("#editForm").serialize()).done(function (result) {
+                    if (result.done === 1) {
+                        $("#id").val(result.id);
+                        $('#error').html('').hide();
+                        $("#editModal").modal("hide");
+                        usersGrid.bootgrid('reload');
+
+                    }
+                    else if (result.error != undefined) {
+                        toastr.error(result.error);
+                    }
+
+                });
+        }
+
+         function processDeleteUser() {
+                $.post('@Url.Action("Delete","UserManagement")' + "/" + currentUserId).done(function(result) {
+                    if (result.done === 1) {
+                        usersGrid.bootgrid('reload');
+                    } else {
+                        toastr.error(result.error);
+                    }
+                });
+            }
+    </script>
+}

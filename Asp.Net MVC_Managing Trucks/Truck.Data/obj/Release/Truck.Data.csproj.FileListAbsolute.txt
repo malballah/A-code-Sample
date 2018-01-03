@@ -1,0 +1,16 @@
+D:\Freelance\rusyus\Truck\Truck.Data\bin\Release\Truck.Data.dll.config
+D:\Freelance\rusyus\Truck\Truck.Data\bin\Release\Truck.Data.dll
+D:\Freelance\rusyus\Truck\Truck.Data\bin\Release\Truck.Data.pdb
+D:\Freelance\rusyus\Truck\Truck.Data\bin\Release\EntityFramework.dll
+D:\Freelance\rusyus\Truck\Truck.Data\bin\Release\EntityFramework.SqlServer.dll
+D:\Freelance\rusyus\Truck\Truck.Data\bin\Release\Truck.Core.dll
+D:\Freelance\rusyus\Truck\Truck.Data\bin\Release\Truck.Core.pdb
+D:\Freelance\rusyus\Truck\Truck.Data\bin\Release\EntityFramework.xml
+D:\Freelance\rusyus\Truck\Truck.Data\bin\Release\EntityFramework.SqlServer.xml
+D:\Freelance\rusyus\Truck\Truck.Data\obj\Release\Truck.Data.csprojResolveAssemblyReference.cache
+D:\Freelance\rusyus\Truck\Truck.Data\obj\Release\Truck.Data.Migrations.init.resources
+D:\Freelance\rusyus\Truck\Truck.Data\obj\Release\Truck.Data.Migrations.adjustment.resources
+D:\Freelance\rusyus\Truck\Truck.Data\obj\Release\Truck.Data.Migrations.assignment_return.resources
+D:\Freelance\rusyus\Truck\Truck.Data\obj\Release\Truck.Data.csproj.GenerateResource.Cache
+D:\Freelance\rusyus\Truck\Truck.Data\obj\Release\Truck.Data.dll
+D:\Freelance\rusyus\Truck\Truck.Data\obj\Release\Truck.Data.pdb

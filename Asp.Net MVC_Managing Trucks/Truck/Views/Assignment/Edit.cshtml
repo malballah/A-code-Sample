@@ -1,0 +1,385 @@
+﻿@model Truck.ViewModels.AssignmentViewModel
+
+<style>
+
+
+	.box3 {
+		clear: left;
+		font-size: 14px;
+	}
+
+	.box4, .box5 {
+		padding: 20px;
+		font-size: 16px;
+		text-align: center;
+		width: 400px;
+	}
+
+	.box6 {
+		clear: left;
+		text-align: center;
+		width: 400px;
+	}
+
+	.box7 {
+		margin-left: 60px;
+		margin-top: 100px;
+	}
+
+	.fix-marg {
+		width: 150px;
+		position: relative;
+		top: -5px;
+		left: 5px;
+	}
+
+	.form-fields {
+		margin-top: 175px;
+	}
+
+		.form-fields label {
+			border-bottom: 1px solid #ccc;
+			vertical-align: middle !important;
+			padding: 10px;
+		}
+</style>
+<div class="page">
+	<h3 class="title">@ViewBag.Title</h3>
+		<form role="form" name="invoices" id="invoices" method="post" action="@Url.Action("Create", "Assignment")">
+			<input type="hidden" id="Id" name="Id" value="@Model.Id" />
+			<input type="hidden" id="Number" name="Number" value="@Model.Number" />
+			<div class="assignment-info row" @if (!Model.Id.HasValue) { <text> style="display: none" </text>   }>
+				<div class="col-sm-12 col-md-7">
+					<div class="text-center">
+						<p class="h5"> MEL INC </p>
+						<p class="h5"> 825 F Street Suite 600 </p>
+						<p class="h5">West Sacramento, CA 95605</p>
+						<p class="h5">(844) 801.8737 Ext. 102</p>
+						<br />
+						<p class="h4">ASSIGNMENT SHEET</p>
+					</div>
+					<br />
+
+					<div class="box3">
+						<p>
+							For value received, the undersigned (“Assignor”) sells, assigns, transfers and sets over to <b>MEL Inc</b> and
+							its successors and assigns (“<b>MEL Inc</b>”) the accounts receivable described in the accompanying invoices numbered
+							consecutively from _________ to _________ (except number _________________________________) in the total amount
+							of $ <span class="total">@Model.Total</span>, including all proceeds and collections, all associated guaranties and security, and all rights, title
+							and interest of Assignor in the associated merchandise or services, as well as all other rights which Assignor may
+							have as an unpaid seller (collectively called the “Accounts”).
+						</p>
+						<p>
+							This assignment is made pursuant to and is subject to the provisions of the factoring agreement (“Factoring Agreement”)
+							entered into by Assignor and Apex, and the Factoring Agreement is made part of this assignment by reference. As of
+							this date, Assignor acknowledges that all of the same warranties, representations, agreements and undertakings made
+							in the Factoring Agreement with respect to the Accounts and all other matters mentioned in the Factoring Agreement
+							apply with the same force and effect as if fully set out in this assignment.
+						</p>
+
+					</div>
+
+					<div class="box6">
+						<p class="h4">IMPORTANT</p>
+						<p class="h5">In House By 2:00 PM PT</p>
+						<p class="h5">To Receive Payment On Time</p>
+					</div>
+				   
+				</div>
+				<div class="col-sm-12 col-md-5 form-fields">
+					<div class="form-group">
+						<label class="control-label col-md-5">Schedule Number : </label>
+						<label class="control-label col-md-7">@Model.Number</label>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">Date : </label>
+						<label class="control-label col-md-7">@DateTime.Now.ToString("dd/MM/yyyy")</label>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">Invoices Amount : </label>
+						<label class="control-label col-md-7 total" >@Model.Total</label>
+					</div>
+				    <div class="form-group">
+				        <label class="control-label col-md-5">Fuel : </label>
+				        <label class="control-label col-md-7 fuel">@Model.Fuel</label>
+				    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-5">Fee : </label>
+                        <label class="control-label col-md-7 fee">@Model.Fee</label>
+                    </div>
+					<div class="form-group">
+						<label class="control-label col-md-5"><b>Distribution : </b></label>
+						<label id="bank" class="control-label col-md-7"><b>@Model.Funded</b></label>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">Your Company Name (Assignor) : </label>
+						<label class="control-label col-md-7" style="padding-top: 10px;padding-bottom: 27px;">@Model.CustomerName</label>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-md-5">Name : </label>
+						<label class="control-label col-md-7">@Model.Name</label>
+					</div>
+					<div class="form-group">
+					    <label class="control-label col-md-3" style="border: none">Signature
+					    </label>
+                       
+						<label class="col-md-9" style="border:none">
+							<input type="text" class="form-control" id="Signature" name="Signature" required value="@Model.Signature">
+						</label>
+						 </div>
+					<div class="form-group">
+					    <button type="button" class="btn btn-primary has-spinner" id="btnSaveAssignment">
+					        <i class="fa fa-save"></i>Save Assignment
+					    </button>
+                        @if (Model.StatusId <= 2)
+                        {
+                            <button type="button" class="btn btn-success" id="btnSubmitAssignment" style="display: none"><i class="fa fa-save"></i>Submit Assignment</button>
+                        }
+						
+						<button type="button" class="btn btn-primary" id="btnChangeInvoices"><i class="fa "></i>Change invoices</button>
+					</div>
+				</div>
+			</div>
+			<div class="invoices" @if (Model.Id.HasValue) { <text> style="display: none" </text>   }>
+				<div class="invoices-container">
+					@for (int i = 0; i < Model.Invoices.Count; i++)
+					{
+						<div class="invoice-row">
+							<input type="hidden" class="invoiceId" name="Invoices[@i].Id" value="@Model.Invoices[i].Id"/>
+							<div class="form-group col-md-2">
+								<label class="control-label">Invoice #</label>
+								<input type="number" class="form-control" name="Invoices[@i].Number" min="1" value="@Model.Invoices[i].Number" required>
+							</div>
+							<div class="form-group col-md-2">
+								<label class="control-label">Invoice Amount</label>
+								<input type="number" class="form-control amount" name="Invoices[@i].Amount" min="1" value="@Model.Invoices[i].Amount" required>
+							</div>
+							<div class="form-group col-md-2">
+								<label class="control-label">Work Order #</label>
+								<input class="form-control" name="Invoices[@i].WONumber" value="@Model.Invoices[i].WONumber" required>
+							</div>
+							<div class="form-group col-md-6">
+								<label class="control-label">Customer Name</label>
+								<div class="form-inline">
+									<input type="text" class="form-control" name="Invoices[@i].CustomerName" value="@Model.Invoices[i].CustomerName" required>
+									<a href="#" onclick="removeInvoice(this)" class="text-danger h4" style="margin-left: 10px"><i class="fa fa-close"></i></a>
+								</div>
+
+							</div>
+							<div class="col-md-10">
+								<button type="button" class="btn btn-primary fa fa-file" onclick="addFile(this, 0)"> Add File</button>
+								<label class="text-danger error" style="display: none">You have to add at least one file</label>
+								<div class="files">
+									@for (int j = 0; j < Model.Invoices[i].Attachments?.Count; j++)
+									{
+										<div class="col-md-push-1 col-md-10">
+											<input type='file' class='file oldFile' style='visibility: hidden; width: 0; height: 0'/>
+											<input type="hidden" name='Invoice@(i + "_OldFile" + j)' value="@Model.Invoices[i].Attachments[j].Id"/>
+											<a style="margin-right: 10px" class="text-danger h4" onclick="removeFile(this)" href="#"><i class="fa fa-close"></i></a><label class="filename">@Model.Invoices[i].Attachments[j].Name</label>
+										</div>
+									}
+								</div>
+							</div>
+						</div>
+					}
+
+				</div>
+				<div class="form-group" style="height: 50px">
+					<button type="button" class="btn btn-primary" id="btnAddInvoice"><i class="fa fa-plus"></i>Add Invoice</button>
+
+				</div>
+				<div class="row form-group" style="height: 50px">
+					<label class="control-label col-sm-6 col-md-1">Fuel</label>
+					<div class="col-sm-6 col-md-11">
+						<input type="number" min="0" required name="Fuel" id="Fuel" class="form-control" value="@Model.Fuel">
+					</div>
+
+				</div>
+				<div class="form-group text-center invoices-buttons">
+
+					<button type="button" class="btn btn-primary" id="btnSubmitInvoices"><i class="fa fa-save"></i>Submit Invoices</button>
+				</div>
+			</div>
+		</form>
+	<div class="modal fade" id="submitModal" role="dialog">
+		<div class="modal-dialog modal-sm">
+			<div class="modal-content">
+				<div class="modal-body">
+					<p>Are you sure want to submit this assignment?</p>
+					<div>
+						<button type="button" class="btn btn-default" data-dismiss="modal" id="btnConfirmSubmit" onclick="processSubmitAsignment()">Yes</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+@section Scripts{
+	<script type="text/javascript">
+		$(function() {
+			validateForm();
+			$("#editModal").keypress(function (e) {
+				if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+					$("#btnSaveAssignment").trigger("click");
+					return false;
+				} else {
+					return true;
+				}
+			});
+			$("#btnAddInvoice").click(function() {
+				if (!$("form#invoices").valid())
+					return;
+				var index = $(".invoice-row").length;
+				var html = '<div class="invoice-row"><input type="hidden" class="invoiceId" name = "Invoices[' + index + '].Id" value="' + (index * -1) + '"/><div class="form-group col-md-2"><label for="Number">Invoice #</label><input type="number" min="1" class="form-control" name="Invoices[' + index + '].Number" required></div><div class="form-group col-md-2"><label for="Amount">Invoice Amount</label><input type="number" min="1" class="form-control amount" name="Invoices[' + index + '].Amount" required></div><div class="form-group col-md-2"><label for="WONumber">Work Order #</label><input class="form-control" name="Invoices[' + index + '].WONumber" required></div><div class="form-group col-md-6"><label for="CustomerName">Customer Name</label><div class="form-inline"><input type="text" class="form-control" name="Invoices[' + index + '].CustomerName" required><a href="#" onclick="removeInvoice(this)" class="text-danger h4"  style="margin-left: 10px"><i class="fa fa-close"></i></a></div></div><div class="col-md-10"><button type="button" class="btn btn-primary fa fa-file" onclick="addFile(this,' + index + ')"> Add File</button> <label class="text-danger error" style="display:none">You have to add at least one file</label><div class="files"></div></div></div> ';
+				$('.invoices-container').append(html);
+				validateForm();
+			});
+			$("#Fuel").change(function() {
+				calculate();
+			});
+			$("#btnChangeInvoices").click(function() {
+				$('.invoices').show();
+				$('.assignment-info').hide();
+			});
+			$("#btnSubmitInvoices").click(function() {
+				if (!$("form#invoices").valid())
+					return;
+				var valid = true;
+				$(".files").each(function () {
+					var atLeatFile = false;
+					$(this).find(".file").each(function() {
+						var $file = $(this);
+						if ($file.val().length > 0||$file.hasClass("oldFile")) {
+							atLeatFile = true;
+						} else
+							$file.parent().remove();
+					});
+				   if (atLeatFile === false) {
+					   $(this).prev(".error").show();
+					   valid = false;
+				   }
+				});
+				if (!valid)
+					return;
+				var total = 0;
+				var invoiceCount = 0;
+				$(".amount").each(function() {
+					total += parseFloat($(this).val());
+					invoiceCount++;
+				});
+				$(".total").text(total.toFixed(2));
+				calculate();
+				$("#invoiceCount").val(invoiceCount);
+				$('.invoices').hide();
+				$('.assignment-info').show();
+				validateForm();
+			});
+			$("#btnSubmitAssignment").click(function() {
+				$("#submitModal").modal("show");
+			});
+			$("#btnSaveAssignment").click(function () {
+				if (!$("form#invoices").valid())
+					return;
+				var data = new window.FormData();
+				var formFields = $("form#invoices").serializeArray();
+				$(formFields).each(function() {
+					data.append(this.name, this.value);
+				});
+				//append files
+				$("input.file").each(function (i) {
+					if (this.files.length > 0) {
+						data.append($(this).attr("name"), this.files[0]);
+						//add file name
+						data.append($(this).attr("name"), $(this).val().replace(/^.*\\/, ""));
+					}
+				});
+
+				$.ajax({
+					type: 'post',
+					url: "@Url.Action("Edit", "Assignment")",
+					data: data,
+					processData: false,
+					contentType: false,
+					beforeSend: function () {
+					    $("#btnSaveAssignment").find('i').removeClass("fa-save").addClass("fa-spinner fa-spin");
+					    $("#btnSaveAssignment").text("Uploading files...");
+					},
+					complete: function () {
+					    $("#btnSaveAssignment").find('i').removeClass("fa-spinner").removeClass("fa-spin").addClass("fa-save");
+					    $("#btnSaveAssignment").text("Save Assignment");
+					},
+					success: function (result) {
+
+						if (result.id) {
+							$("#Id").val(result.id);
+							toastr.success("Assignment created successfully.");
+							$("#btnSubmitAssignment").show();
+							$("#btnChangeInvoices").hide();
+						} else
+							toastr.error("Cannot save new assignment.");
+					}
+				});
+
+			});
+
+			function validateForm() {
+				$("form#invoices").validate();
+			}
+		});
+		function calculate() {
+			var total = parseFloat($(".total:first").text()).toFixed(2);
+			var rate = parseFloat('@ViewBag.CustomerRate').toFixed(2);
+		    var fuel = parseFloat($("#Fuel").val()).toFixed(2);
+		    var fee = total * rate;
+		    $(".fuel").text(fuel);
+		    $(".fee").text(fee.toFixed(2));
+		    $("#bank").text((total - (total * rate) - fuel).toFixed(2));
+		}
+		function removeInvoice(ctrl) {
+			$(ctrl).parents(".invoice-row").remove();
+			$(".invoice-row").each(function(i) {
+				$(this).find("input").each(function() {
+					var name = $(this).attr("name");
+					if (name != undefined) {
+						name = name.replace(/(\d+)/g, i);
+						$(this).attr("name", name);
+					}
+
+				});
+			});
+		}
+
+		function addFile(ctrl) {
+			var fileIndex = $(ctrl).nextAll(".files").find('.file').length;
+			var $div = $('<div class="col-md-push-1 col-md-10"></div>');
+			var invoiceId = $(ctrl).parent().parent().find(".invoiceId").val();
+			var $file = $("<input type='file' name='Invoice" + invoiceId + "_File" + fileIndex + "' class='file' style='visibility: hidden; width: 0; height: 0'/>");
+			$div.append($file);
+			$(ctrl).nextAll(".files").append($div);
+			$file.trigger('click');
+			$file.change(function (e) {
+				var fileName = $(this).val().replace(/^.*\\/, "");
+				$div.append('<a style="margin-right: 10px" class="text-danger h4" onclick="removeFile(this)" href="#"><i class="fa fa-close"></i></a><label class="filename">' + fileName + '</label>');
+				$(ctrl).next("label.error").hide();
+			});
+		}
+
+		function removeFile(ctrl) {
+			$(ctrl).parent().remove();
+		}
+		function processSubmitAsignment() {
+			$.post('@Url.Action("SubmitAssignment", "Assignment")' + "/" + $("#Id").val()).done(function (result) {
+				if (result.done === 1) {
+					toastr.success("Assignment submitted successfully");
+					$("#btnSubmitAssignment,#btnSaveAssignment").hide();
+					window.location.href = "@Url.Action("Index","Assignment")";
+				} else {
+					toastr.error(result.error);
+				}
+			});
+		}
+	</script>
+
+}

@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryMonitor", "DirectoryMonitor\DirectoryMonitor.csproj", "{B57224E4-73AB-4977-970B-835068EF066A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryMonitorService", "DirectoryMonitorService\DirectoryMonitorService.csproj", "{A332B3AC-5A75-4463-B093-48CC331D1DC9}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "DirectoryMonitorInstaller", "DirectoryMonitorInstaller\DirectoryMonitorInstaller.vdproj", "{38C6FAEB-7E39-46B9-A9EF-CE521BA8BC4A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B57224E4-73AB-4977-970B-835068EF066A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B57224E4-73AB-4977-970B-835068EF066A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B57224E4-73AB-4977-970B-835068EF066A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B57224E4-73AB-4977-970B-835068EF066A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A332B3AC-5A75-4463-B093-48CC331D1DC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A332B3AC-5A75-4463-B093-48CC331D1DC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A332B3AC-5A75-4463-B093-48CC331D1DC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A332B3AC-5A75-4463-B093-48CC331D1DC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38C6FAEB-7E39-46B9-A9EF-CE521BA8BC4A}.Debug|Any CPU.ActiveCfg = Debug
+		{38C6FAEB-7E39-46B9-A9EF-CE521BA8BC4A}.Release|Any CPU.ActiveCfg = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

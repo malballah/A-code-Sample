@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{32F02CB3-679A-480F-B036-895744B15EDB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Truck.Data</RootNamespace>
+    <AssemblyName>Truck.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Infrastructure\DbFactory.cs" />
+    <Compile Include="Infrastructure\Disposablecs.cs" />
+    <Compile Include="Infrastructure\IDbFactory.cs" />
+    <Compile Include="Infrastructure\IUnitOfWork.cs" />
+    <Compile Include="Infrastructure\UnitOfWork.cs" />
+    <Compile Include="Migrations\201702211417461_init.cs" />
+    <Compile Include="Migrations\201702211417461_init.Designer.cs">
+      <DependentUpon>201702211417461_init.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702211534101_adjustment.cs" />
+    <Compile Include="Migrations\201702211534101_adjustment.Designer.cs">
+      <DependentUpon>201702211534101_adjustment.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702241856448_assignment_return.cs" />
+    <Compile Include="Migrations\201702241856448_assignment_return.Designer.cs">
+      <DependentUpon>201702241856448_assignment_return.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703101834490_wordernumber-string.cs" />
+    <Compile Include="Migrations\201703101834490_wordernumber-string.Designer.cs">
+      <DependentUpon>201703101834490_wordernumber-string.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703250758259_fee.cs" />
+    <Compile Include="Migrations\201703250758259_fee.Designer.cs">
+      <DependentUpon>201703250758259_fee.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703260344144_child_letter.cs" />
+    <Compile Include="Migrations\201703260344144_child_letter.Designer.cs">
+      <DependentUpon>201703260344144_child_letter.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201704192033414_orgfilepath.cs" />
+    <Compile Include="Migrations\201704192033414_orgfilepath.Designer.cs">
+      <DependentUpon>201704192033414_orgfilepath.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\IRepository.cs" />
+    <Compile Include="Repositories\Repository.cs" />
+    <Compile Include="TruckDbContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Truck.Core\Truck.Core.csproj">
+      <Project>{5ff3a9b4-7a54-42c1-98d1-9b1c297d0dbc}</Project>
+      <Name>Truck.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201702211417461_init.resx">
+      <DependentUpon>201702211417461_init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702211534101_adjustment.resx">
+      <DependentUpon>201702211534101_adjustment.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702241856448_assignment_return.resx">
+      <DependentUpon>201702241856448_assignment_return.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703101834490_wordernumber-string.resx">
+      <DependentUpon>201703101834490_wordernumber-string.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703250758259_fee.resx">
+      <DependentUpon>201703250758259_fee.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703260344144_child_letter.resx">
+      <DependentUpon>201703260344144_child_letter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201704192033414_orgfilepath.resx">
+      <DependentUpon>201704192033414_orgfilepath.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

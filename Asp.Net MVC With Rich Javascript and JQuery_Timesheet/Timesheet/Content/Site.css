@@ -1,0 +1,196 @@
+﻿body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}
+
+/* Set padding to keep content from hitting the edges */
+.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Override the default bootstrap behavior where horizontal description lists 
+   will truncate terms that are too long to fit in the left column 
+*/
+.dl-horizontal dt {
+    white-space: normal;
+}
+
+/* Set width on the form input elements since they're 100% wide by default */
+input,
+select,
+textarea {
+    
+}
+
+        table.timesheet {
+            /*table-layout: fixed;
+            min-width: 1700px;*/
+            background-color: white;
+        }
+
+        table.timesheet tr {
+            height: 40px;
+        }
+
+        table.timesheet th, table.timesheet td {
+            padding: 5px;
+            text-align: center;
+        }
+
+        table.timesheet th.aleft, table.timesheet td.aleft {
+            text-align: left !important;
+        }
+
+        /*table.timesheet th.projectTitle, table.timesheet th.tracker {
+            width: 70px;
+        }*/
+
+        table.timesheet th.tracker {
+            border-right: none !important;
+        }
+
+        table.timesheet th.monthly, table.timesheet th.daily {
+            text-align: right;
+            border-left: none !important;
+            border-right: none !important;
+        }
+
+        table.timesheet th.days {
+            width: 40px !important;
+            padding: 0 !important;
+        }
+
+        table.timesheet tr.gray {
+            background-color: #eee;
+        }
+
+        table.timesheet th.blue1 {
+            background-color: dodgerblue;
+        }
+
+        table.timesheet th.blue2 {
+            background-color: cornflowerblue;
+        }
+
+        table.timesheet td.work_hour {
+            padding: 0 !important;
+        }
+
+        table.timesheet td.work_hour.active {
+            border: 2px solid #808080;
+        }
+
+        input.hours {
+            width: 32px;
+            height: 24px;
+            padding: 1px;
+        }
+
+        input.hours:focus, input.hours {
+            border: none !important;
+            outline: none;
+            text-align: center;
+        }
+ /*.tbl-content {
+     overflow: auto;
+     width:1000px;
+     height:300px
+ }
+.timesheet thead.mask {
+        position: absolute;
+    top: 204px;
+    background-color: white;
+}*/
+ div.page-head {
+       height: 169px;
+    position: fixed;
+    width: 100%;
+    z-index: 999;
+    background-color: white;
+    top: 51px;
+    padding-left:20px;
+    padding-right:20px;
+ }
+  div#timesheet {
+          position: absolute;
+    top: 220px;
+  }
+  .body-content {
+      padding:0 !important;
+      padding-right: 30px !important;
+  }
+  /*table.timesheet.sticky-corner tbody tr:first-child th:first-child {
+      width:568px !important
+  }*/
+  table.sticky-corner tbody tr:first-child th:last-child {
+      width:488px !important
+  }
+    table.sticky-corner tbody tr:first-child th:first-child {
+      width:80px !important
+  }
+  table.sticky-column tbody tr:first-child th:last-child {
+      width:489px !important
+  }
+    table.sticky-column tbody tr:first-child th:first-child {
+      width:80px !important
+  }
+    .table-bordered > thead > tr > th, .table-bordered > thead > tr > td {
+        border-width: 1px !important;
+    }
+
+    div#timesheet {
+        padding-right:20px;
+        padding-bottom:20px;
+    }
+
+
+ select.projects {
+    padding: 10px;
+    width: 100%;
+    height: 450px;
+    overflow: auto;
+    border: 1px solid #eee;
+    border-radius: 3px;
+}
+select.projects option {
+    background-color: #ffffff !important;
+    border: 1px solid #cccccc;
+    border-radius: 2px;
+    color: #555555 !important;
+    cursor: move;
+    font-family: helvetica,sans-serif !important;
+    font-weight: normal !important;
+    list-style: outside none none;
+    margin-bottom: 10px;
+    padding: 10px;
+    text-overflow: ellipsis;
+    word-wrap: normal;
+    line-height: 15px;
+    
+}
+
+p.arrows {
+        text-align: center;
+    font-size: 40px;
+}
+p.arrows:first-child {
+    margin-top: 180px;
+}
+#selectProjectModal {
+    height:900px;
+}
+#selectProjectModal .modal-body div {
+    overflow: hidden;
+}
+
+#btnRemoveProjects {
+        border: none;
+    background: snow;
+    color: darkred;
+}
+#btnAddProjects {
+        border: none;
+    background: snow;
+    color: darkgreen;
+}

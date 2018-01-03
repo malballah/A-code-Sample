@@ -1,0 +1,292 @@
+﻿<div class="page">
+    <h3 class="title">
+        @if (ViewBag.StatusName != null)
+        {
+            @ViewBag.StatusName
+        }
+        Assignments
+        @if (ViewBag.CustomerName != null)
+        {
+            <text> Of <b>@ViewBag.CustomerName</b></text>
+        }
+    </h3>
+@if (ViewBag.StatusId == null)
+{
+    <div class="row">
+        <label class="control-label col-md-2">Assignment Status</label>
+        <div class="col-md-3">
+            @Html.DropDownList("StatusId", ViewBag.AssignmentStatuses as IEnumerable<SelectListItem>, "", new { @class = "form-control" })
+        </div>
+    </div>
+}
+  
+
+    <table id="assignments-grid" class="table table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th data-column-id="id" data-type="numeric" data-visible="false" data-identifier="true" data-selection="true" selection="true">id</th>
+                <th data-column-id="number" data-width="150" data-formatter="assignmentNumber">Assignment #</th>
+                <th data-column-id="total" data-width="70" data-formatter="decimal">Total</th>
+                <th data-column-id="fee" data-width="70" data-formatter="decimal">Fee</th>
+                <th data-column-id="fuel" data-width="70"  data-formatter="decimal">Fuel</th>
+                <th data-column-id="funded" data-width="80" data-formatter="decimal">Funded</th>
+                <th data-column-id="adjustment" data-width="80" data-formatter="decimal">Adjustment</th>
+                <th data-column-id="totalPayable" data-width="100" title="Total Payable" data-formatter="decimal">Total Payable</th>
+                <th data-column-id="date" data-formatter="date" data-width="100">Date</th>
+                <th data-column-id="status" data-width="100">Status</th>
+                @if (User.IsInRole("admin"))
+                {
+                    <th data-formatter="review" data-width="80"></th>
+                }
+                else
+                {
+                  
+                        <th data-column-id="returnReason" data-formatter="returned"  data-width="50"></th>
+                  
+                    <th data-formatter="invoices-link" data-align="center" class="center" data-width="70" headerCssClass="center" headerAlign="center" data-type="numeric">Invoices</th>
+                    <th data-formatter="submit" data-width="80"></th>
+                    <th data-column-id="commands" data-formatter="commands" data-sortable="false" data-width="70"></th>
+                }
+                
+            </tr>
+        </thead>
+      
+    </table>
+
+    <div id="editModal" class="modal fade" tabindex="-1" role="dialog">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="pull-left" id="title">Edit Assignment</h3>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button class="btn btn-primary" id="btnSave" onclick="saveAssignment()">Save</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="deleteModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Are you sure want to delete this assignment?</p>
+                    <div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnConfirmDelete" onclick="processDeleteAssignment()">Yes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="submitModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Are you sure want to submit this assignment?</p>
+                    <div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnConfirmSubmit" onclick="processSubmitAssignment()">Yes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="approveModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p class="title">Are you sure want to approve this assignment?</p>
+                    <div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnApproveSubmit" onclick="processApproveAssignment()">Yes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="returnReasonModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              
+                <div class="modal-body">
+                    <p id="return-reason"></p>
+                    <hr/>
+                    <div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        var currentAssignmentId = null;
+        var assignmentsGrid = null;
+        var operation = null;
+        $(function () {
+            $("#StatusId").change(function () {
+                assignmentsGrid.bootgrid("reload");
+            });
+            assignmentsGrid = $("#assignments-grid").bootgrid({
+                ajax: true,
+                url: "@Url.Action("GetAssignments", "Assignment")",
+                columnSettings: true,
+                sorting: true,
+                post: function () {
+                    return { Params: { StatusId: $("#StatusId").val() || '@ViewBag.StatusId' } };
+                },
+                templates: {
+                    header: bootGrid.getHeaderWithNew('@User.IsInRole("admin")' === "True" ? "" : "<a class='command-new btn btn-info pull-left' href='@Url.Action("Edit", "Assignment")'><i class='fa fa-plus'></i> New</a>")
+                },
+                formatters:
+            {
+                "assignmentNumber":
+                function (column, row) {
+                    return row.number + row.childLetter;
+                },
+                "commands":function (column, row) {
+                    if (row.statusId <=2 || ('@User.IsInRole("admin")' === "True" && row.statusId === 4))
+                        return bootGrid.getEditDeleteCommand(row.id);
+                },
+                "invoices-link":
+                function (column, row) {
+                    if (row.invoicesCount === 0)
+                        row.invoicesCount = "";
+                    return "<a href='@Url.Action("Index", "Invoice")?AssignmentId=" + row.id + "' class='badge'>" + row.invoicesCount + "</a>";
+                },
+                "submit":
+
+                function (column, row) {
+                    if (row.statusId === 1 || row.statusId === 2)
+                        return "<button type='button' class='btn btn-success btn-sm' onclick='submitAssignment(" + row.id + ")'>Submit</button>";
+                },
+                "approve":
+                function (column, row) {
+                    if (row.statusId === 2)
+                        return "<button type='button' class='btn btn-success btn-sm' onclick='approveAssignment(" + row.id + ")'>Approve</button>";
+                    if (row.statusId === 3)
+                        return "<button type='button' class='btn btn-success btn-sm' onclick='unApproveAssignment(" + row.id + ")'>UnApprove</button>";
+                },
+                "review":
+                function (column, row) {
+                    return "<button type='button' class='btn btn-success btn-sm' onclick='editAssignment(" + row.id + ")'>Review</button>";
+                },
+                "returned":
+                function (column, row) {
+                    if (row.status === "Returned")
+                        return "<a style='color:red;cursor:pointer' ><i onclick='showReturnReason(\"" + row.returnReason + "\")' class='fa fa-envelope'></i></a>";
+                },
+                "date": function (column, row) {
+                    if(row.date!=null)
+                        return moment(row.date).format('MM/DD/YYYY');
+                    }
+            }
+            }).
+    on("loaded.rs.jquery.bootgrid", function () {
+        assignmentsGrid.find(".command-edit").off().on("click", function () {
+            var id = $(this).attr("data-row-id");
+            editAssignment(id);
+            return false;
+        }).end().find(".command-delete").off().on("click", function () {
+            var id = $(this).attr("data-row-id");
+            deleteAssignment(id);
+
+        });
+    });
+
+
+        });
+  //acions
+            function editAssignment(id) {
+                window.location = "@Url.Action("Edit","Assignment")/" + id;
+            }
+
+            function deleteAssignment(id) {
+                currentAssignmentId = id;
+                $("#deleteModal").modal("show");
+            }
+        function saveAssignment() {
+            if (!$("#editForm").valid())
+                return;
+            $.post('@Url.Action("Edit", "Assignment")', $("#editForm").serialize()).done(function (result) {
+                if (result.error === undefined) {
+                    $("#id").val(result.id);
+                    $("#editModal").modal("hide");
+                    assignmentsGrid.bootgrid('reload');
+
+                } else if (result.error != undefined) {
+                    toastr.error(result.error);
+                }
+
+            });
+        }
+
+        function submitAssignment(id) {
+            currentAssignmentId = id;
+            $("#submitModal").modal("show");
+        }
+
+        function approveAssignment(id) {
+            currentAssignmentId = id;
+            operation = "approve";
+            $("#approveModal .title").text("Are you sure want to approve this assignment?");
+            $("#approveModal").modal("show");
+        }
+        function unApproveAssignment(id) {
+            currentAssignmentId = id;
+            operation = "unapprove";
+            $("#approveModal .title").text("Are you sure want to unapprove this assignment?");
+            $("#approveModal").modal("show");
+        }
+        function processDeleteAssignment() {
+            $.post('@Url.Action("Delete", "Assignment")' + "/" + currentAssignmentId).done(function (result) {
+                if (result.done === 1) {
+                    assignmentsGrid.bootgrid('reload');
+                } else {
+                    toastr.error(result.error);
+                }
+            });
+        }
+
+        function processSubmitAssignment() {
+            $.post('@Url.Action("SubmitAssignment", "Assignment")' + "/" + currentAssignmentId).done(function (result) {
+                if (result.done === 1) {
+                    toastr.success("Assignment submitted successfully");
+                    assignmentsGrid.bootgrid('reload');
+                } else {
+                    toastr.error(result.error);
+                }
+            });
+        }
+
+        function processApproveAssignment() {
+            var url = "@Url.Action("ApproveAssignment", "Assignment")";
+            var msg = "Assignment approved successfully";
+            if (operation === "unapprove") {
+                url = "@Url.Action("UnApproveAssignment", "Assignment")";
+                msg = "Assignment unapproved successfully";
+            }
+            $.post(url + "/" + currentAssignmentId).done(function (result) {
+                if (result.done === 1) {
+                    toastr.success(msg);
+                    assignmentsGrid.bootgrid('reload');
+                } else {
+                    toastr.error(result.error);
+                }
+            });
+        }
+        function showReturnReason(reason) {
+            $("#returnReasonModal #return-reason").text(reason);
+            $("#returnReasonModal").modal("show");
+        }
+    </script>
+}

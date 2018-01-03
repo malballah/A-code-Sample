@@ -1,0 +1,304 @@
+﻿<div class="page">
+    <h3 class="title">
+        Invoices
+        @if (ViewBag.AssignmentNumber != null)
+        {
+            <text> Of Assignment # @ViewBag.AssignmentNumber</text>
+        }
+
+    </h3>
+    <form class="form-horizontal" role="form" id="filterForm">
+        <div class="form-group">
+            <label class="control-label col-md-2">Invoice Number</label>
+            <div class="col-md-2">
+                <input type="number" name="Number" id="number" class="form-control"/>
+            </div>
+            <label class="control-label col-md-2">Assignment Number</label>
+            <div class="col-md-2">
+                <input type="number" name="AssignmentNumber" id="assignmentNumber" class="form-control" />
+            </div>
+            <label class="control-label col-md-2">Work Order #</label>
+            <div class="col-md-2">
+                <input type="text" name="WONumber" id="woNumber" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            @if (User.IsInRole("admin"))
+            {
+                <label class="control-label col-md-2">Customer</label>
+                <div class="col-md-2">
+                    @Html.DropDownList("customerId", ViewBag.Customers as IEnumerable<SelectListItem>, "", new { @class = "form-control" })
+                </div>
+            }
+          
+            <label class="control-label col-md-2">Form</label>
+            <div class="col-md-2">
+                <input type="text" name="DateFrom" id="dateFrom" class="date form-control"/>
+            </div>
+            <label class="control-label col-md-2">To</label>
+            <div class="col-md-2">
+                <input type="text" name="DateTo" id="dateTo" class="date form-control"/>
+            </div>
+
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2">Invoice Customer</label>
+            <div class="col-md-2">
+                <input type="text" name="InvoiceCustomerName" id="invoiceCustomerName" class="form-control" />
+            </div>
+            <label class="control-label col-md-2">Status</label>
+            <div class="col-md-2">
+                <select class="form-control" id="StatusId">
+                    <option value=""></option>
+                    <option value="1">Not Paid</option>
+                    <option value="2">Paid</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <div class="col-md-4">
+                    <input type="checkbox" name="Period1"  value="0-30"/><label class="control-label radio-inline">0-30</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="checkbox" name="Period2" value="31-60"/><label class="control-label radio-inline">31-60</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="checkbox" name="Period3" value="61-90"/><label class="control-label radio-inline">61-90</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary" onclick="searchInvoices()"><i class="fa fa-search"></i> Search</button>
+            </div>
+           
+        </div>
+    </form>
+    
+    <table id="invoices-grid" class="table table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th data-column-id="id" data-type="numeric" data-visible="false" data-identifier="true" data-selection="true" selection="true">id</th>
+                
+                @if (ViewBag.AssignmentNumber == null)
+                {
+                    <th data-column-id="assignmentNumber">Assignment #</th>
+                }
+                <th data-column-id="number" data-width="90">Invoice #</th>
+                <th data-column-id="woNumber">Work Order #</th>
+                <th data-column-id="date" data-formatter="date" data-width="100">Invoice Date</th>
+                <th data-column-id="amount" data-formatter="decimal">Invoice Amount</th>
+                <th data-column-id="paidAmount" data-formatter="decimal">Amount Payable</th>
+                <th data-column-id="checkAmount" data-formatter="decimal">Check Amount</th>
+                <th data-column-id="checkNumber" data-width="80">Check #</th>
+                <th data-column-id="checkDate" data-formatter="date" data-width="100"> Check Received Date</th>
+                <th data-column-id="status">Status</th>
+                <th data-column-id="customerName">Customer</th>
+                <th data-formatter="files-link" data-width="60">Files</th>
+                <th data-column-id="commands" data-formatter="commands" data-sortable="false" data-width="70"></th>
+            </tr>
+        </thead>
+      
+    </table>
+
+    <div id="editModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog @if(User.IsInRole("admin")) {<text>modal-lg full-width-modal</text>} ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="pull-left" id="title">Edit Invoice</h3>
+                </div>
+                <div class="modal-body">
+                </div>
+                @if (User.IsInRole("user"))
+                {
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" id="btnSaveInvoice" onclick="saveInvoice()">Save</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="deleteModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Are you sure want to delete this invoice?</p>
+                    <div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnConfirmDelete" onclick="processDeleteInvoice()">Yes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="filesModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="pull-left invoice-number"></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="files">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        var currentInvoiceId = null;
+        var invoicesGrid = null;
+        $(function() {
+            $("body").keypress(function (e) {
+                if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                    searchInvoices();
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+            invoicesGrid = $("#invoices-grid").bootgrid({
+                ajax: true,
+                url: "@Url.Action("SearchInvoices", "Invoice")",
+                columnSettings: true,
+                sorting: true,
+                post: function () {
+                    return { Params: {
+                        invoiceNumber:$("#number").val(),
+                        woNumber:$("#woNumber").val(),
+                        assignmentNumber:$("#assignmentNumber").val(),
+                        customerId:$("#customerId").val(),
+                        invoiceCustomerName : $("#invoiceCustomerName").val(),
+                        statusId :$("#StatusId").val(),
+                        period1: getPeriod1(),
+                        period2: getPeriod2(),
+                        dateFrom:$("#dateFrom").val(),
+                        dateTo: $("#dateTo").val()
+                    } };
+                },
+                formatters: {
+                    "commands": function (column, row) {
+                        if (row.assignmentStatusId <=3 && '@User.IsInRole("admin")'==='True')
+                            return bootGrid.getEditDeleteCommand(row.id);
+                        @*else if (row.assignmentStatusId <= 2 && '@User.IsInRole("user")' === 'True')
+                            return bootGrid.getDeleteCommand(row.id);*@
+                    },
+                    "files-link": function(column, row) {
+                        if (row.filesCount === 0)
+                            row.filesCount = "";
+                        return "<a href='#' onclick='getFiles(" + row.id + "," + row.number + ")' class='badge'>" + row.filesCount + "</a>";
+                    },
+                    "date": function (column, row) {
+                        if (row[column.id] != null)
+                            return moment(row[column.id]).format('MM/DD/YYYY');
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function() {
+                invoicesGrid.find(".command-edit").off().on("click", function() {
+                    var id = $(this).attr("data-row-id");
+                    editInvoice(id);
+                    return false;
+                }).end().find(".command-delete").off().on("click", function() {
+                    var id = $(this).attr("data-row-id");
+                    deleteInvoice(id);
+
+                });
+            });
+
+            //acions
+            function editInvoice(id) {
+                $.get('@Url.Action("EditInvoice", "Invoice")' + "/" + id).done(function(html) {
+                    $("#editModal .modal-body").html(html);
+                    $("#editModal #title").text("Edit Invoice");
+                    $("#editModal").modal("show");
+                    $("#editInvoiceForm").validate();
+                });
+            }
+
+            function deleteInvoice(id) {
+                currentInvoiceId = id;
+                $("#deleteModal").modal("show");
+            }
+        });
+        function getPeriod1() {
+            var period = $("[name='Period1']:checked").val() == undefined ? null : $("[name='Period1']:checked").val().split('-')[0];
+            if(period===null)
+                period = $("[name='Period2']:checked").val() == undefined ? null : $("[name='Period2']:checked").val().split('-')[0];
+            if (period === null)
+                period = $("[name='Period3']:checked").val() == undefined ? null : $("[name='Period3']:checked").val().split('-')[0];
+            return period;
+        }
+
+        function getPeriod2() {
+            var period = $("[name='Period3']:checked").val() == undefined ? null : $("[name='Period3']:checked").val().split('-')[1];
+            if (period === null)
+                period = $("[name='Period2']:checked").val() == undefined ? null : $("[name='Period2']:checked").val().split('-')[1];
+            if (period === null)
+                period = $("[name='Period1']:checked").val() == undefined ? null : $("[name='Period1']:checked").val().split('-')[1];
+            return period;
+        }
+        function saveInvoice() {
+            if (!$("#editInvoiceForm").valid())
+                return;
+            $.post('@Url.Action("EditInvoice", "Invoice")', $("#editInvoiceForm").serialize()).done(function(result) {
+                if (result.error === undefined) {
+                    $("#id").val(result.id);
+                    $("#editModal").modal("hide");
+                    invoicesGrid.bootgrid('reload');
+
+                } else if (result.error != undefined) {
+                    toastr.error(result.error);
+                }
+
+            });
+        }
+
+        function processDeleteInvoice() {
+            $.post('@Url.Action("Delete", "Invoice")' + "/" + currentInvoiceId).done(function(result) {
+                if (result.done === 1) {
+                    invoicesGrid.bootgrid('reload');
+                } else {
+                    toastr.error(result.error);
+                }
+            });
+        }
+
+        function getFiles(id, number) {
+            $.post('@Url.Action("InvoiceFiles", "Invoice")' + "/" + id).done(function(result) {
+                $("#filesModal .invoice-number").text("Files of Invoice # " + number);
+                $("#filesModal .files").html(result);
+                $("#filesModal").modal("show");
+            });
+        }
+
+        function downloadFile(url) {
+            window.open(url, "_blank");
+        }
+
+        function deleteFile(invoiceId, fileId, ctrl) {
+            $.post('@Url.Action("DeleteInvoiceFile", "Invoice")', { invoiceId: invoiceId, fileId: fileId }).done(function(result) {
+                if (result.done === 1) {
+                    $(ctrl).parent().parent().remove();
+                    invoicesGrid.bootgrid('reload');
+                } else {
+                    toastr.error(result.error);
+                }
+            });
+        }
+
+       
+        function searchInvoices() {
+            invoicesGrid.bootgrid("reload");
+        }
+    </script>
+}

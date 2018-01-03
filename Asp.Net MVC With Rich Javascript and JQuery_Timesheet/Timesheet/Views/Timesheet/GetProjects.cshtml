@@ -1,0 +1,71 @@
+﻿@model Timesheet.Models.SelectProjectEditModel
+
+<div>
+    <h4>Pick your current projects</h4>
+    <div class="col-md-5">
+    <select id="projectList" class="projects form-control" multiple>
+            @foreach (var item in Model.ProjectList)
+            {
+                <option value="@item.Code">
+                    @(item.Code + " " + item.Description)
+                </option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <p class="arrows">
+            <button type="button" id="btnAddProjects" title="Select current projects" disabled="disabled" onclick="addProjects()"><i class="glyphicon glyphicon-arrow-right"></i></button>
+        </p>
+        <p class="arrows">
+            <button type="button" id="btnRemoveProjects" title="Remove from current projects" disabled="disabled" onclick="deleteProjects()"><i class="glyphicon glyphicon-arrow-left"></i></button>
+        </p>
+    </div>
+    <div class="col-md-5">
+        <select id="selectedProjects" class="projects form-control" multiple>
+            @foreach (var item in Model.SelectedProjects)
+            {
+                <option value="@item.Code" @if (!item.CanRemove)
+                                           {
+                                               <text> disabled="disabled"</text>
+                                           }
+                >
+                
+                    @(item.Code + " " + item.Description)
+                </option>
+            }
+        </select>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $("#projectList").change(function() {
+                if ($(this).val().length > 0)
+                    $("#btnAddProjects").removeAttr("disabled");
+                else
+                    $("#btnAddProjects").attr("disabled", "disabled");
+            });
+            $("#selectedProjects").change(function () {
+                if ($(this).val().length > 0)
+                    $("#btnRemoveProjects").removeAttr("disabled");
+                else
+                    $("#btnRemoveProjects").attr("disabled", "disabled");
+            });
+           
+        });
+        function addProjects() {
+            $("#projectList option:selected").each(function () {
+                $("#selectedProjects").append(this);
+            });
+            $("#selectedProjects").val([]);
+            $("#btnAddProjects,#btnRemoveProjects").attr("disabled", "disabled");
+        }
+        function deleteProjects() {
+            $("#selectedProjects option:selected").each(function () {
+                $("#projectList").append(this);
+            });
+            $("#projectList").val([]);
+            $("#btnAddProjects,#btnRemoveProjects").attr("disabled", "disabled");
+        }
+    </script>
+</div>
+
+

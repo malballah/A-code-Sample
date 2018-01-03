@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DirectoryMonitorDataSet" targetNamespace="http://tempuri.org/DirectoryMonitorDataSet.xsd" xmlns:mstns="http://tempuri.org/DirectoryMonitorDataSet.xsd" xmlns="http://tempuri.org/DirectoryMonitorDataSet.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+          <Connection AppSettingsObjectName="Settings" AppSettingsPropertyName="DirectoryMonitorConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="DirectoryMonitorConnectionString (Settings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.MonitorDirectory.Properties.Settings.GlobalReference.Default.DirectoryMonitorConnectionString" Provider="System.Data.SqlClient" />
+        </Connections>
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DirectoryMonitorDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="True" msprop:Generator_DataSetName="DirectoryMonitorDataSet" msprop:Generator_UserDSName="DirectoryMonitorDataSet">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Directories" msprop:Generator_TableClassName="DirectoriesDataTable" msprop:Generator_TableVarName="tableDirectories" msprop:Generator_TablePropName="Directories" msprop:Generator_RowDeletingName="DirectoriesRowDeleting" msprop:Generator_RowChangingName="DirectoriesRowChanging" msprop:Generator_RowEvHandlerName="DirectoriesRowChangeEventHandler" msprop:Generator_RowDeletedName="DirectoriesRowDeleted" msprop:Generator_UserTableName="Directories" msprop:Generator_RowChangedName="DirectoriesRowChanged" msprop:Generator_RowEvArgName="DirectoriesRowChangeEvent" msprop:Generator_RowClassName="DirectoriesRow">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="DirectoryName" msprop:Generator_ColumnVarNameInTable="columnDirectoryName" msprop:Generator_ColumnPropNameInRow="DirectoryName" msprop:Generator_ColumnPropNameInTable="DirectoryNameColumn" msprop:Generator_UserColumnName="DirectoryName" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

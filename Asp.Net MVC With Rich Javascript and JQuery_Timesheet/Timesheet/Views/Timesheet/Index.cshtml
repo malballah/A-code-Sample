@@ -1,0 +1,274 @@
+﻿@model Timesheet.Models.TimesheetEditModel
+<div class="">
+    <div class="page-head">
+        <h3>Please enter your timesheet</h3>
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label class="control-label col-md-2">Select Year</label>
+                <div class="col-sm-12 col-md-2">
+                    @Html.DropDownList("year", ViewBag.Years as IEnumerable<SelectListItem>, new { @class = "form-control", onchange = "getTimesheet()" })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2">Select Month</label>
+                <div class="col-sm-12 col-md-2">
+                    @Html.DropDownList("month", ViewBag.Months as IEnumerable<SelectListItem>, new { @class = "form-control", onchange = "getTimesheet()" })
+
+                </div>
+                <div class="col-md-4">
+                    <button id="selectProjects" class="btn btn-primary" type="button" > Select Projects </button>
+                    <button id="save" class="btn btn-success" type="button" 
+                            @if (Model.Locked) { <text> disabled="disabled" </text> }
+                            >
+                        <i></i> Save
+                    </button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    
+    <div id="timesheet">
+        @Html.Partial("Timesheet", @Model)
+    </div>
+</div>
+<div id="selectProjectModal" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSelectedProjects(this)"><i></i> Ok</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="saveAlertModal" class="modal fade" tabindex="-1" role="dialog" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p>Please save your timesheet first!</p>
+                <button class="btn" aria-hidden="true" data-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary btnSave"  data-dismiss="modal"><i></i> Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+   
+    <script type="text/javascript">
+        var saved = true;
+        $(function () {
+            initSheet();
+            recalculate();
+            $("#year,#month").on('focus', function () {
+                
+                save($("#save"), function () {
+                   
+                });
+            });
+
+            $("#save,.btnSave").click(function () {
+                save($(this),function() {
+
+                });
+            });
+
+            $("#selectProjects").click(function () {
+                var getProj = function () {
+                    $.post("@Url.Action("GetProjects", "Timesheet")").done(function (view) {
+                    $("#selectProjectModal .modal-body").html(view);
+                    $("#selectProjectModal").modal("show");
+                    });
+                }
+                if (!saved) {
+                    save($("#save"), function() {
+                        getProj();
+                    });
+                } else
+                    getProj();
+
+            });
+        });
+
+
+        function getTimesheet(callback) {
+          
+                $.blockUI({ message: '<h2>Getting timesheet...</h2>' });
+                $.post("@Url.Action("Timesheet", "Timesheet")?year=" + $("#year").val() + "&month=" + $("#month").val()).done(function(sheet) {
+                    $("#timesheet").html(sheet);
+                    $.unblockUI();
+                    initSheet();
+					recalculate();
+                    if (callback)
+                        callback();
+                });
+           
+        }
+
+        function saveSelectedProjects(btn) {
+            var $btn = $(btn);
+            var selectedProjects = [];
+            $("#selectedProjects").find("option").each(function() {
+                selectedProjects.push($(this).attr("value"));
+            });
+        
+            $.post("@Url.Action("SelectProjects", "Timesheet")", { projects: selectedProjects }).done(function(result) {
+                if (result.Done === 1) {
+                    getTimesheet(function () {
+                     
+                        $("#selectProjectModal").modal("hide");
+                    });
+
+                }
+            });
+        }
+
+
+        var $table = null;
+        function initSheet(){
+
+            $table = $("table.timesheet");
+            $table.click(function () {
+                setValue();
+            });
+            $table.sticky({
+                columnCount: 4,
+                offset: { top: 220, left: 0 }
+            });
+
+            if (locked !== "True") {
+                $("#save").removeAttr("disabled");
+                $table.find("td.work_hour").click(function (e) {
+                    e.stopPropagation();
+                    setValue();
+                    var $this = $(this);
+                    var val = $this.text();
+                    $this.text("");
+                    var $input = $("<input type='text' class='hours' />");
+                    $this.addClass("active").append($input);
+                    $this.find("input").val(val)[0].focus();
+
+                    $input.click(function (e) {
+                        e.stopPropagation();
+                    }).keypress(function (e) {
+                        if (e.keyCode === 13) {
+                            setValue();
+                            return false;
+                        }
+                        else if (e.keyCode === 37 || e.keyCode === 38 || e.keyCode === 39 || e.keyCode === 40 || e.keyCode === 8 || e.keyCode === 46)
+                            return true;
+                        else {
+                            if (! /^(\d+)?([.]?\d{0,1})?$/.test($(this).val() + e.key))
+                                e.preventDefault();
+
+                        }
+                        saved = false;
+                    }).change(function() {
+                        saved = false;
+                    });
+                });
+            }
+            else
+                $("#save").attr("disabled","disabled");
+        }
+
+        function setValue() {
+            var $txt = $table.find(".work_hour.active input");
+            if ($txt.length === 0)
+                return;
+            var value = $txt.val() || "0";
+            value = parseFloat(value).toFixed(1);
+            if (isNaN(value)|| value === 0 || value.toString() === "0" || value.toString() === ".0" || value.toString() === "0.0")
+                $table.find(".work_hour.active").text("");
+            else
+                $table.find(".work_hour.active").text(value.toString().replace(".0", ""));
+
+            $table.find(".work_hour.active").removeClass("active");
+            recalculate();
+        }
+        function recalculate() {
+            for (var i = 1; i <= 31; i++) {
+                $table.find(".pt_" + i).each(function () {
+                    var code = $(this).attr("data-code");
+                    $(this).text(getTotal($table.find(".wh_" + i + "_" + code)));
+                });
+                $("table.timesheet").find(".dailyTotal_" + i).text(getTotal($table.find(".pt_" + i)));
+
+                var total = 0;
+                for (var j = i; j > 0; j--) {
+                    var txt = $table.find(".dailyTotal_" + j).text();
+                    if (txt !== "")
+                        txt = parseFloat(txt);
+                    else
+                        txt = 0;
+                    total += txt;
+                }
+                total = total.toFixed(1);
+                total = total.toString().replace(".0", "");
+                $("table.timesheet").find(".monthlyTotal_" + i).text(total);
+            }
+        }
+
+        function getTotal(domArr) {
+            var total = 0;
+            domArr.each(function () {
+                var txt = $(this).text();
+                if (txt !== "")
+                    txt = parseFloat(txt);
+                else
+                    txt = 0;
+                total += txt;
+            });
+            total = total.toFixed(1);
+            total = total.toString().replace(".0", "");
+            return total;
+        }
+       
+        function save($btn, callBack) {
+            if (saved === true)
+                return;
+            setValue();
+            console.log("saving");
+            var workedHours = [];
+
+            $("table.timesheet.table-non-sticky").first().find("td.work_hour").each(function() {
+
+                var $this = $(this);
+                var hours = $this.text();
+                if (hours !== "") {
+                    workedHours.push({
+                        ProjectTrackerId: $this.attr("data-ptracker"),
+                        AssignmentId: $this.attr("data-assid"),
+                        WorkDateId: $this.attr("data-day"),
+                        Hours: hours
+
+                    });
+                }
+            });
+      
+            //block ui
+            $.blockUI({ message: '<h2>Saving...</h2>' });
+            $.post("@Url.Action("Save", "Timesheet")", { WorkedHours: workedHours, Year: $("#year").val(), Month: $("#month").val() }).done(function(result) {
+              
+                $.unblockUI();
+                callBack();
+                if (result.Done === 1)
+                    toastr.success("Timesheet saved successfully.");
+                else if (result.Done === 0)
+                    toastr.error("An error has been occured, please try again later.");
+                else if (result.Error)
+                    toastr.error(result.Error);
+                saved = true;
+            }).fail(function() {
+                $.unblockUI();
+            });
+        }
+    </script>
+}

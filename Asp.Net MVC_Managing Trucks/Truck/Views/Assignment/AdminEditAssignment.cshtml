@@ -1,0 +1,380 @@
+﻿@model Truck.ViewModels.AssignmentViewModel
+
+<div class="page">
+    <h3 class="title">
+        Review Assignment # @(Model.Number + Model.ChildLetter)
+    </h3>
+    <div class="row">
+        <div class="col-md-6">
+            @using (Html.BeginForm("Edit", "Assignment", FormMethod.Post, new {id = "editForm"}))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="form-horizontal">
+                    @Html.HiddenFor(model => model.Id)
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.InvoicesCount, htmlAttributes: new {@class = "control-label col-md-4"})
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.InvoicesCount, new {htmlAttributes = new {@class = "form-control", type = "text", disabled = "disabled"}})
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Total, htmlAttributes: new {@class = "control-label col-md-4"})
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.Total, new {htmlAttributes = new {@class = "form-control", disabled = "disabled"}})
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.TotalPayable, htmlAttributes: new {@class = "control-label col-md-4"})
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.TotalPayable, new {htmlAttributes = new {@class = "form-control", disabled = "disabled"}})
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Fuel, htmlAttributes: new {@class = "control-label col-md-4"})
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.Fuel, new {htmlAttributes = new {@class = "form-control", type = "number", required = ""}})
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Funded, htmlAttributes: new {@class = "control-label col-md-4"})
+                        <div class="col-md-8">
+                            @Html.EditorFor(model => model.Funded, new {htmlAttributes = new {@class = "form-control", disabled = "disabled"}})
+                        </div>
+                    </div>
+                   
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.IsFunded, htmlAttributes: new { @class = "control-label col-md-2" })
+                            <div class="col-md-1">
+                                @Html.CheckBoxFor(model => model.IsFunded)
+                            </div>
+                        </div>
+                   
+                        <div>
+                            <button type="button" class="btn btn-primary" disabled="disabled" id="btnSaveAssignment"><i class="fa fa-save"></i>Save</button>
+                            <button type="button" class="btn btn-primary" onclick="returnAssignment()" id="btnReturnAssignment"><i class="fa fa-save"></i>Return</button>
+                        </div>
+                    
+                </div>
+            }
+        </div>
+       @if (Model.StatusId <= 3)
+       {
+        <div class="col-md-6 adjustments" @if (ViewBag.Adjustment == null) { <text> style="display:none" </text>  }>
+            <table id="adjustments-grid" class="table table-condensed table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th data-column-id="id" data-type="numeric" data-visible="false" data-identifier="true" data-selection="true" selection="true">id</th>
+                        <th data-column-id="amount">Amount</th>
+                        <th data-column-id="assignmentNumber" number>Assignment</th>
+                        <th data-column-id="appliedAssignmentId" data-formatter="checkbox">Applied</th>
+                        <th data-formatter="apply-button"></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+       }
+         
+        
+   
+    </div>
+   
+            <table id="invoices-grid" class="table table-condensed table-hover table-striped">
+                <thead>
+                <tr>
+                    <th data-column-id="id" data-type="numeric" data-visible="false" data-identifier="true" data-selection="true" selection="true">id</th>
+                    @if (ViewBag.AssignmentNumber == null)
+                    {
+                        <th data-column-id="assignmentNumber">Assignment #</th>
+                    }
+                    <th data-column-id="number" data-width="90">Invoice #</th>
+                    <th data-column-id="woNumber">Work Order #</th>
+                    <th data-column-id="date" data-formatter="date" data-width="100">Invoice Date</th>
+                    <th data-column-id="amount">Invoice Amount</th>
+                    <th data-column-id="paidAmount">Amount Payable</th>
+                    <th data-column-id="checkAmount">Check Amount</th>
+                    <th data-column-id="checkNumber" data-width="80">Check #</th>
+                    <th data-column-id="checkDate" data-formatter="date" data-width="100"> Check Received Date</th>
+                    <th data-column-id="status">Status</th>
+                    <th data-column-id="customerName">Customer</th>
+                    <th data-formatter="files-link" data-width="60">Files</th>
+                    <th data-column-id="commands" data-formatter="commands" data-sortable="false" data-width="80"></th>
+                </tr>
+                </thead>
+
+            </table>
+
+            <div id="editModal" class="modal fade" tabindex="-1" role="dialog">
+
+                <div class="modal-dialog modal-lg full-width-modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">×</button>
+                            <h3 class="pull-left" id="title">Edit Invoice</h3>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal fade" id="deleteModal" role="dialog">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <p>Are you sure want to delete this invoice?</p>
+                            <div>
+                                <button type="button" class="btn btn-default" data-dismiss="modal" id="btnConfirmDelete" onclick="processDeleteInvoice()">Yes</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    <div class="modal fade" id="filesModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="pull-left invoice-number"></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="files">
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="returnModal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="pull-left"> Return Invoice</h3>
+                </div>
+                <div class="modal-body">
+                    <form class='form-horizontal'>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">Reason</label>
+                            <div class="col-md-10">
+                                <textarea id="returnReason" class="form-control" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btnConfirmReturn" onclick="processReturnAssignment()">Yes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+        </div>
+    
+@section Scripts{
+    <script type="text/javascript">
+        var currentInvoiceId = null;
+        var invoicesGrid = null;
+        var adjustmentsGrid = null;
+        $(function () {
+            $("#editForm").validate();
+            $("#editForm .form-control,#editForm #IsFunded").change(function () {
+                $("#btnSaveAssignment").removeAttr("disabled");
+            });
+
+            $("body").keypress(function (e) {
+                if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                    if ($("#btnSaveAssignment").attr("disabled")!=="disabled")
+                        $("#btnSaveAssignment").trigger("click");
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+            checkStatus(@Model.StatusId);
+
+            loadAdjustments();
+
+            invoicesGrid = $("#invoices-grid").bootgrid({
+                ajax: true,
+                url: "@Url.Action("GetInvoices", "Invoice")",
+                columnSettings: true,
+                sorting: true,
+                post: function() {
+                    return { Params: { assignmentId: '@Model.Id' } };
+                },
+                templates: {
+                    header: "<div><p class='h4 text-center'>Invoices of Assignment</p></div>"
+        },
+                formatters: {
+                    "commands": function(column, row) {
+                            return bootGrid.getEditDeleteCommand(row.id);
+                    },
+                    "files-link": function(column, row) {
+                        if (row.filesCount === 0)
+                            row.filesCount = "";
+                        return "<a href='#' onclick='getFiles(" + row.id + "," + row.number + ")' class='badge'>" + row.filesCount + "</a>";
+                    },
+                    "date": function (column, row) {
+                        if (row[column.id] != null)
+                            return moment(row[column.id]).format('MM/DD/YYYY');
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function() {
+                invoicesGrid.find(".command-edit").off().on("click", function() {
+                    var id = $(this).attr("data-row-id");
+                    editInvoice(id);
+                    return false;
+                }).end().find(".command-delete").off().on("click", function() {
+                    var id = $(this).attr("data-row-id");
+                    deleteInvoice(id);
+
+                });
+            });
+            //save assignment
+            $("#btnSaveAssignment").click(function () {
+                if (!$("#editForm").valid())
+                    return;
+               $.post("@Url.Action("Edit","Assignment")",$("#editForm").serialize()).done(function(result) {
+                   if (result.id) {
+                       if (result.statusId > 3)
+                           $(".adjustments").remove();
+                       $("#Funded").val(result.funded);
+                       if (adjustmentsGrid != null)
+                           adjustmentsGrid.bootgrid("reload");
+                        toastr.success("Assignment saved successfully.");
+                        $("#btnSaveAssignment").attr("disabled", "disabled");
+                       checkStatus(result.statusId);
+                    } else
+                        toastr.error(result.error);
+               });
+            });
+
+            //acions
+            function editInvoice(id) {
+                $.get('@Url.Action("EditInvoice", "Invoice")' + "/" + id).done(function(html) {
+                    $("#editModal .modal-body").html(html);
+                    $("#editModal #title").text("Edit Invoice");
+                    $("#editModal").modal("show");
+                    $("#editInvoiceForm").validate();
+
+                });
+            }
+
+            function deleteInvoice(id) {
+                currentInvoiceId = id;
+                $("#deleteModal").modal("show");
+            }
+        });
+        function checkStatus(id) {
+            if (id >= 4) {
+                $(".adjustments,#btnSaveAssignment,#btnReturnAssignment").hide();
+                $("#Fuel,#IsFunded").attr("disabled","disabled");
+            }
+        }
+
+
+        function processDeleteInvoice() {
+            $.post('@Url.Action("Delete", "Invoice")' + "/" + currentInvoiceId).done(function(result) {
+                if (result.done === 1) {
+                    $("#Total").val(result.total);
+                    $("#TotalPayable").val(result.totalPayable);
+                    $("#Funded").val(result.funded);
+                    invoicesGrid.bootgrid('reload');
+                } else {
+                    toastr.error(result.error);
+                }
+            });
+        }
+
+        function getFiles(id, number) {
+            $.post('@Url.Action("InvoiceFiles", "Invoice")' + "/" + id).done(function(result) {
+                $("#filesModal .invoice-number").text("Files of Invoice # " + number);
+                $("#filesModal .files").html(result);
+                $("#filesModal").modal("show");
+            });
+        }
+
+        function downloadFile(url) {
+            window.open(url, "_blank");
+        }
+
+        function deleteFile(invoiceId, fileId, ctrl) {
+            $.post('@Url.Action("DeleteInvoiceFile", "Invoice")', { invoiceId: invoiceId, fileId: fileId }).done(function (result) {
+                if (result.done === 1) {
+                    $(ctrl).parent().parent().remove();
+                    invoicesGrid.bootgrid('reload');
+                } else {
+                    toastr.error(result.error);
+                }
+            });
+        }
+        function applyAdjustment(id) {
+            $.post('@Url.Action("ApplyAdjustment", "Adjustment")?assignmentId=@Model.Id&adjustmentId=' + id).done(function (result) {
+                if (result.error) {
+                    toastr.error(result.error);
+                } else {
+                    $("#Fuel").val(result.fuel);
+                    $("#Funded").val(result.funded);
+                    adjustmentsGrid.bootgrid("reload");
+                }
+            });
+        }
+        function invoicesSaved(assignment) {
+            $("#Total").val(assignment.total);
+            $("#TotalPayable").val(assignment.totalPayable);
+            $("#Funded").val(assignment.funded);
+            $(".adjustments").show();
+            if (adjustmentsGrid != null)
+                adjustmentsGrid.bootgrid("reload");
+            else
+                loadAdjustments();
+        }
+        function loadAdjustments() {
+
+            adjustmentsGrid = $("#adjustments-grid").bootgrid({
+                ajax: true,
+                url: "@Url.Action("GetAdjustments", "Adjustment")",
+                columnSettings: true,
+            sorting: true,
+            post: function() {
+                return { Params: { CustomerId: '@Model.CustomerId', AssignmentId: '@Model.Id' } };
+            },
+            templates: {
+                header: "<div><p class='h4 text-center'>Adjustments</p></div>"
+            },
+            formatters: {
+                "apply-button": function (column, row) {
+                    if ("" + row.appliedAssignmentId !== "@Model.Id")
+                        return "<button class='btn btn-primary' onClick='applyAdjustment(" + row.id + ")'>Apply</button>";
+                },
+                "checkbox": function (column, row) {
+                    if ("" + row.appliedAssignmentId==="@Model.Id")
+                        return "<input type='checkbox' checked='checked' disabled='disabled' />";
+                    return "<input type='checkbox'  disabled='disabled' />";
+                }
+            }
+        });
+        }
+        function returnAssignment() {
+            $("#returnModal").modal("show");
+        }
+        function processReturnAssignment() {
+            $.post('@Url.Action("ReturnAssignment", "Assignment")' + "/" + @Model.Id,{ReturnReason:$("#returnReason").val()}).done(function (result) {
+                if (result.done === 1) {
+                    toastr.success("Assignment returned successfully");
+                    window.location.href = "@Url.Action("Index","Assignment")?StatusId=3";
+                } else {
+                    toastr.error(result.error);
+                }
+            });
+        }
+    </script>
+}

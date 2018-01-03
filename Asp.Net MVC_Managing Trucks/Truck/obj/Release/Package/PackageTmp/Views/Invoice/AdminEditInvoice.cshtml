@@ -1,0 +1,198 @@
+﻿@model Truck.ViewModels.InvoiceViewModel
+<style>
+  #editModal   .modal-dialog {
+  height: 97%;
+  margin: 1% auto !important;
+}
+
+#editModal .modal-content {
+height: 100%;
+}
+#editModal .modal-body {
+      position: absolute;
+    bottom: 0;
+    top: 65px;
+}
+.tab-content,.tab-pane {
+    height:100%;
+}
+</style>
+<div class="" style="height:230px">
+    @using (Html.BeginForm("EditInvoice", "Invoice", FormMethod.Post, new { id = "editInvoiceForm" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.HiddenFor(model => model.Id)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Number, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div class="col-md-2">
+                    @Html.EditorFor(model => model.Number, new { htmlAttributes = new { @class = "form-control", type = "number", required = "" } })
+                </div>
+
+                @Html.LabelFor(model => model.Amount, htmlAttributes: new { @class = "control-label col-md-1 nopadding" })
+                <div class="col-md-2">
+                    @Html.EditorFor(model => model.Amount, new { htmlAttributes = new { @class = "form-control", type = "number", required = "" } })
+                </div>
+
+                @Html.LabelFor(model => model.WONumber, htmlAttributes: new { @class = "control-label col-md-1 nopadding" })
+                <div class="col-md-2">
+                    @Html.EditorFor(model => model.WONumber, new { htmlAttributes = new { @class = "form-control", required = "" } })
+
+                </div>
+
+                @Html.LabelFor(model => model.CustomerName, htmlAttributes: new { @class = "control-label col-md-1 nopadding" })
+                <div class="col-md-2">
+                    @Html.EditorFor(model => model.CustomerName, new { htmlAttributes = new { @class = "form-control", required = "" } })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.PaidAmount, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div class="col-md-2">
+                    @Html.EditorFor(model => model.PaidAmount, new { htmlAttributes = new { @class = "form-control", disabled = "disabled" } })
+                </div>
+
+                <label class="control-label col-md-1  nopadding">Upload check</label>
+                <div class="col-md-2">
+                    <input type="file" id="check" class="form-control" />
+                </div>
+                @Html.LabelFor(model => model.CheckNumber, htmlAttributes: new { @class = "control-label col-md-1 nopadding" })
+                <div class="col-md-2">
+                    @Html.EditorFor(model => model.CheckNumber, new { htmlAttributes = new { @class = "form-control" } })
+                </div>
+                @Html.LabelFor(model => model.CheckAmount, htmlAttributes: new { @class = "control-label col-md-1 nopadding" })
+                <div class="col-md-2">
+                    @Html.EditorFor(model => model.CheckAmount, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.CheckDate, htmlAttributes: new { @class = "control-label col-md-1" })
+                <div class="col-md-2">
+                    @Html.EditorFor(model => model.CheckDate, new { htmlAttributes = new { @class = "form-control date" } })
+                </div>
+                <label id="adjustmentAmount" class="h5 text-danger col-md-push-6 col-md-6 bold" style="display:none">Adjustment amount = <span></span></label>
+            </div>
+
+            <div class="">
+                <button class="btn" type="button" data-dismiss="modal" aria-hidden="true">Close</button>
+                @if (Model.StatusId != 2)
+                {
+
+                    <button type="button" class="btn btn-primary" disabled="disabled" id="btnSave" onclick="saveInvoice()"><i class="fa fa-save"></i> Save</button>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<div class="attachments-images-container" >
+
+    <ul class="nav nav-tabs">
+        @for (var i = 0; i < Model.Attachments.Count(); i++)
+        {
+            var title = "Attachment " + (i + 1);
+            if (Model.Attachments.ElementAt(i).IsCheck)
+            {
+                title = "Check";
+            }
+
+            <li @if (i == 0) { <text> class="active" </text>   }><a data-toggle="tab" href="@("#att" + Model.Attachments.ElementAt(i).Id)">@title</a></li>
+        }
+    </ul>
+    <div class="tab-content">
+        @for (var i = 0; i < Model.Attachments.Count(); i++)
+        {
+            <div @if (i == 0) { <text> class="tab-pane fade in active" </text>    } else { <text> class="tab-pane fade" </text>   }
+                 id="@("att" + Model.Attachments.ElementAt(i).Id)">
+                <iframe data-path="@Model.Attachments.ElementAt(i).Path" class="pdfFrame" style="display: none"></iframe>
+            </div>
+        }
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#editModal").keypress(function (e) {
+            if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                $("#editModal #btnSave").trigger("click");
+                e.stopPropagation();
+                return false;
+            } else {
+                return true;
+            }
+        });
+        $("#editInvoiceForm .form-control").change(function() {
+            $("#editInvoiceForm #btnSave").removeAttr("disabled");
+        });
+        $(".attachments-images-container iframe").each(function() {
+            var $this = $(this);
+            $.get($this.attr("data-path")).done(function (result) {
+                $this.attr("src", result);
+                $this.show();
+            });
+        });
+        $("#editInvoiceForm #CheckDate").datetimepicker({
+            format: 'm/d/Y',
+            dateFormat: 'm/d/Y',
+            timepicker: false
+        });
+        if ($("#editInvoiceForm #CheckDate").val() != null)
+            $("#editInvoiceForm #CheckDate").val($("#editInvoiceForm #CheckDate").val().split(' ')[0]);
+    })
+    function saveInvoice() {
+        if (!$("#editInvoiceForm").valid())
+            return;
+        var data = new window.FormData();
+        var formFields = $("form#editInvoiceForm").serializeArray();
+        $(formFields).each(function () {
+            data.append(this.name, this.value);
+        });
+
+        data.append("check", $("#check")[0].files[0]);
+        //add file name
+        data.append("check_name", $("#check").val().replace(/^.*\\/, ""));
+
+        $.ajax({
+            type: 'post',
+            url: "@Url.Action("EditInvoice", "Invoice")",
+            data: data,
+        processData: false,
+        contentType: false,
+        beforeSend: function () {
+            $("#btnSave").find('i').removeClass("fa-save").addClass("fa-spinner fa-spin");
+        },
+        complete: function () {
+            $("#btnSave").find('i').removeClass("fa-spinner").removeClass("fa-spin").addClass("fa-save");
+        },
+        success: function(result) {
+            if (result.error === undefined) {
+                if (typeof (invoicesSaved) == "function")
+                    invoicesSaved(result);
+                $("#id").val(result.id);
+                $("#check").val("");
+                if (result.adjustment != null) {
+                    $("#adjustmentAmount").show().find("span").text("$ " + result.adjustment);
+                } else {
+                    $("#editModal").modal("hide");
+                    $("#adjustmentAmount").hide();
+                }
+                $("#invoices-grid").bootgrid('reload');
+                $("#editInvoiceForm #btnSave").attr("disabled", "disabled");
+                if (result.checkId!=null) {
+                    $.get("/Base/GetPdfFile/"+result.checkId).done(function (result) {
+                        var iframe = "<iframe src='" + result + "' class='pdfFrame' ></iframe>";
+                        $(".attachments-images-container ul").append("<li><a data-toggle='tab' href='#att" + result.checkId + "'>Check</a></li>");
+                        $(".attachments-images-container .tab-content").append("<div class='tab-pane fade' id='att" + result.checkId + "'>" + iframe + "</div>");
+                    });
+
+                }
+            } else if (result.error != undefined) {
+                toastr.error(result.error);
+            }
+        }
+    });
+    }
+</script>

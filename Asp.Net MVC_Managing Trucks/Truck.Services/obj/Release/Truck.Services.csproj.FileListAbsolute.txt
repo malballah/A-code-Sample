@@ -1,0 +1,15 @@
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\Truck.Services.dll
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\Truck.Services.pdb
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\log4net.dll
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\Newtonsoft.Json.dll
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\Truck.Core.dll
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\Truck.Data.dll
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\EntityFramework.dll
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\Truck.Core.pdb
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\Truck.Data.pdb
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\log4net.xml
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\Newtonsoft.Json.xml
+D:\Freelance\rusyus\Truck\Truck.Services\bin\Release\EntityFramework.xml
+D:\Freelance\rusyus\Truck\Truck.Services\obj\Release\Truck.Services.csprojResolveAssemblyReference.cache
+D:\Freelance\rusyus\Truck\Truck.Services\obj\Release\Truck.Services.dll
+D:\Freelance\rusyus\Truck\Truck.Services\obj\Release\Truck.Services.pdb

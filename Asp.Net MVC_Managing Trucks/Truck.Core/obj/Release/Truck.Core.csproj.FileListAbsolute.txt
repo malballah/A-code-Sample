@@ -1,0 +1,10 @@
+D:\Freelance\rusyus\Truck\Truck.Core\bin\Release\Truck.Core.dll.config
+D:\Freelance\rusyus\Truck\Truck.Core\bin\Release\Truck.Core.dll
+D:\Freelance\rusyus\Truck\Truck.Core\bin\Release\Truck.Core.pdb
+D:\Freelance\rusyus\Truck\Truck.Core\bin\Release\EntityFramework.dll
+D:\Freelance\rusyus\Truck\Truck.Core\bin\Release\EntityFramework.SqlServer.dll
+D:\Freelance\rusyus\Truck\Truck.Core\bin\Release\EntityFramework.xml
+D:\Freelance\rusyus\Truck\Truck.Core\bin\Release\EntityFramework.SqlServer.xml
+D:\Freelance\rusyus\Truck\Truck.Core\obj\Release\Truck.Core.csprojResolveAssemblyReference.cache
+D:\Freelance\rusyus\Truck\Truck.Core\obj\Release\Truck.Core.dll
+D:\Freelance\rusyus\Truck\Truck.Core\obj\Release\Truck.Core.pdb

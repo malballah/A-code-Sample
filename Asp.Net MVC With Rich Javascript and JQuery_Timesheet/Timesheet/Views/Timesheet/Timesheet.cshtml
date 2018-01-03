@@ -1,0 +1,105 @@
+﻿@model Timesheet.Models.TimesheetEditModel
+<div class="tbl-content">
+    <table class="table-bordered timesheet">
+        <thead>
+        <tr>
+            <th style="width: 70px;border:none" rowspan="2"></th>
+            <th colspan="3" style="width: 430px;border-left:none" rowspan="2"></th>
+            @foreach (var item in Model.WorkDates)
+            {
+                <th class="days">@item.Day_of_Month</th>
+            }
+        </tr>
+        <tr>
+            @foreach (var item in Model.WorkDates)
+            {
+                <th> @Enum.GetName(typeof (DayOfWeek), item.Id_Date.DayOfWeek).Substring(0, 2) </th>
+            }
+        </tr>
+        <tr>
+            <th colspan="4" class="monthly">
+                Monthly Running Total
+            </th>
+            @foreach (var item in Model.WorkDates)
+            {
+                <th class="@("monthlyTotal_" + item.Day_of_Month) blue1"> </th>
+            }
+        </tr>
+        <tr>
+            <th class="aleft projectTitle">Project</th>
+            <th colspan="3" class="aleft tracker">
+                Tracker
+                <label style="float:right">
+                    Daily Total
+                </label>       
+               
+            </th>
+            @foreach (var item in Model.WorkDates)
+            {
+                <th class="@("dailyTotal_" + item.Day_of_Month) blue2"></th>
+            }
+        </tr>
+
+        </thead>
+        <tbody>
+        <tr class="gray">
+            <td class="aleft">NCHG</td>
+            <td colspan="3" class="aleft">Non-Chargeable</td>
+            @foreach (var item in Model.WorkDates)
+            {
+                <td data-code="NCHG" class="@("pt_" + item.Day_of_Month) project">@(Model.TimeCards.Where(e => e.Work_Date_Id == item.Id_Date && e.Assignment.ProjectTracker.Project_Code == "NCHG").Sum(e => e.Hours_Worked))</td>
+            }
+        </tr>
+        @{
+            foreach (var tracker in Model.ProjectTrakers.Where(item => item.Project_Code == "NCHG"))
+            {
+
+                <tr>
+                    <td></td>
+                    <td class="aleft">@tracker.Tracker.Code</td>
+                    <td colspan="2" class="aleft">@tracker.Tracker.Description</td>
+                    @foreach (var item in Model.WorkDates)
+                    {
+                        <td class="@("wh_" + item.Day_of_Month + "_NCHG") work_hour " data-day="@item.Id_Date" data-ptracker="@tracker.Id" data-assid="@(Model.Assignments.FirstOrDefault(a=>a.Project_Tracker_Id==tracker.Id)?.Id)">@(Model.TimeCards.SingleOrDefault(e => e.Assignment.Project_Tracker_Id == tracker.Id && e.Work_Date_Id == item.Id_Date)?.Hours_Worked)</td>
+                    }
+
+                </tr>
+            }
+        }
+        @{
+            foreach (var projects in Model.ProjectTrakers.Where(item => item.Project_Code != "NCHG").OrderBy(item => item.Project_Code).GroupBy(item => item.Project_Code))
+            {
+                <tr class="gray">
+                    <td class="aleft">@projects.ElementAt(0).Project_Code</td>
+                    <td colspan="3" class="aleft">@projects.ElementAt(0).Project.Description</td>
+                    @foreach (var item in Model.WorkDates)
+                    {
+                        <td data-code="@(projects.ElementAt(0).Project_Code)" class="@("pt_" + item.Day_of_Month) project">@(Model.TimeCards.Where(e => e.Work_Date_Id == item.Id_Date && e.Assignment.ProjectTracker.Project_Code == projects.ElementAt(0).Project_Code).Sum(e => e.Hours_Worked))</td>
+                    }
+                </tr>
+                foreach (var tracker in projects)
+                {
+                    <tr>
+                        <td></td>
+                        <td class="aleft">@tracker.Tracker.Code</td>
+                        <td colspan="2" class="aleft">@tracker.Tracker.Description</td>
+                        @foreach (var item in Model.WorkDates)
+                        {
+                            <td class="@("wh_" + item.Day_of_Month + "_" + projects.ElementAt(0).Project_Code) work_hour" data-day="@item.Id_Date" data-ptracker="@tracker.Id" data-assid="@(Model.Assignments.FirstOrDefault(a=>a.Project_Tracker_Id==tracker.Id)?.Id)">@(Model.TimeCards.SingleOrDefault(e => e.Assignment.Project_Tracker_Id == tracker.Id && e.Work_Date_Id == item.Id_Date)?.Hours_Worked)</td>
+                        }
+
+                    </tr>
+
+                }
+
+            }
+        }
+
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    var locked='@Model.Locked';
+</script>
+
+

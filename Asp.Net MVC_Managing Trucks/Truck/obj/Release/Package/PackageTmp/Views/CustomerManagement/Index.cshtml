@@ -1,0 +1,140 @@
+﻿<div class="page">
+    <h3 class="title">Customer Management</h3>
+    <table id="customers-grid" class="table table-condensed table-hover table-striped">
+        <thead>
+            <tr>
+                <th data-column-id="id" data-type="numeric" data-visible="false" data-identifier="true" data-selection="true" selection="true">id</th>
+                <th data-column-id="customerName">Customer Name</th>
+                <th data-formatter="assignments-link" data-align="center"  data-type="numeric">New Assignments</th>
+                <th data-column-id="ownerName">Owner Name</th>
+                <th data-column-id="rate">Rate(%)</th>
+                <th data-column-id="clientNumber">Client Number</th>
+                <th data-column-id="mCNumber">MC #</th>
+                <th data-column-id="address">Address</th>
+                <th data-column-id="email">Email</th>
+                <th data-column-id="phoneNumber">Phone Number</th>
+                <th data-column-id="fax">Fax</th>
+                <th data-column-id="commands" data-formatter="commands" data-sortable="false" data-width="60"></th>
+            </tr>
+        </thead>
+      
+    </table>
+
+    <div id="editModal" class="modal fade" tabindex="-1" role="dialog">
+
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 class="pull-left" id="title">Create Customer</h3>
+                </div>
+                <div class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <button class="btn btn-primary" id="btnSave" onclick="saveCustomer()">Save</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="deleteModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Are you sure want to delete this customer?</p>
+                    <div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" id="btnConfirmDelete" onclick="processDeleteCustomer()">Yes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        var currentCustomerId = null;
+        var customersGrid = null;
+        $(function() {
+            customersGrid = $("#customers-grid").bootgrid({
+                ajax: true,
+                url: "@Url.Action("GetCustomers","CustomerManagement")",
+                columnSettings: true,
+                sorting: true,
+                templates: { header: bootGrid.getHeaderWithNew() },
+                formatters: {
+                    "commands": function (column, row) {
+                        return bootGrid.getEditDeleteCommand(row.id);
+                    },
+                    "assignments-link": function (column, row) {
+                        if (row.newAssignmentCount === 0)
+                            row.newAssignmentCount = "";
+                        return "<a href='@Url.Action("Index","Assignment")?CustomerId="+row.id+"&StatusId=2' class='badge'>"+row.newAssignmentCount+"</a>";
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function () {
+                customersGrid.find(".command-edit").off().on("click", function () {
+                    var id = $(this).attr("data-row-id");
+                    editCustomer(id);
+                    return false;
+                }).end().find(".command-delete").off().on("click", function () {
+                    var id = $(this).attr("data-row-id");
+                    deleteCustomer(id);
+
+                }).end().parent().find(".command-new").off().on("click", function () {
+                    createCustomer();
+                });
+            });
+            //acions
+            function editCustomer(id) {
+                $.get('@Url.Action("Edit","CustomerManagement")' + "/" + id).done(function(html) {
+                    $("#editModal .modal-body").html(html);
+                    $("#editModal #title").text("Edit Customer");
+                    $("#editModal").modal("show");
+                    $("#editForm").validate();
+                });
+            }
+            function createCustomer() {
+                $.get('@Url.Action("Edit","CustomerManagement")' ).done(function (html) {
+                    $("#editModal .modal-body").html(html);
+                    $("#editModal #title").text("Create Customer");
+                    $("#editModal").modal("show");
+                    $("#editForm").validate();
+                });
+            }
+            function deleteCustomer(id) {
+                currentCustomerId = id;
+                $("#deleteModal").modal("show");
+            }
+        });
+
+        function saveCustomer() {
+                if (!$("#editForm").valid())
+                    return;
+                $.post('@Url.Action("Edit","CustomerManagement")', $("#editForm").serialize()).done(function (result) {
+                    if (result.error ===undefined) {
+                        $("#id").val(result.id);
+                        $("#editModal").modal("hide");
+                        customersGrid.bootgrid('reload');
+
+                    }
+                    else if (result.error != undefined) {
+                        toastr.error(result.error);
+                    }
+
+                });
+        }
+
+         function processDeleteCustomer() {
+                $.post('@Url.Action("Delete","CustomerManagement")' + "/" + currentCustomerId).done(function(result) {
+                    if (result.done === 1) {
+                        customersGrid.bootgrid('reload');
+                    } else {
+                        toastr.error(result.error);
+                    }
+                });
+            }
+    </script>
+}

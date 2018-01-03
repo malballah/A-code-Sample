@@ -1,0 +1,172 @@
+﻿<div class="page">
+    <h3 class="title">
+        @(ViewBag.StatusId==1?"UnPaid Invoices":"Paid Invoices")
+    </h3>
+    <form class="form-horizontal" role="form" id="filterForm">
+        <div class="form-group">
+            <label class="control-label col-md-2">Invoice Number</label>
+            <div class="col-md-2">
+                <input type="number" name="Number" id="number" class="form-control"/>
+            </div>
+            <label class="control-label col-md-2">Assignment Number</label>
+            <div class="col-md-2">
+                <input type="number" name="AssignmentNumber" id="assignmentNumber" class="form-control" />
+            </div>
+            <label class="control-label col-md-2">Work Order #</label>
+            <div class="col-md-2">
+                <input type="text" name="WONumber" id="woNumber" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            @if (User.IsInRole("admin"))
+            {
+                <label class="control-label col-md-2">Customer</label>
+                <div class="col-md-2">
+                    @Html.DropDownList("customerId", ViewBag.Customers as IEnumerable<SelectListItem>, "", new { @class = "form-control" })
+                </div>
+            }
+          
+            <label class="control-label col-md-2">Form</label>
+            <div class="col-md-2">
+                <input type="text" name="DateFrom" id="dateFrom" class="date form-control"/>
+            </div>
+            <label class="control-label col-md-2">To</label>
+            <div class="col-md-2">
+                <input type="text" name="DateTo" id="dateTo" class="date form-control"/>
+            </div>
+
+        </div>
+        <div class="form-group">
+                <label class="control-label col-md-2">Invoice Customer</label>
+                <div class="col-md-2">
+                    <input type="text" name="InvoiceCustomerName" id="invoiceCustomerName" class="form-control" />
+                </div>
+            <div class="col-md-4">
+                <div class="col-md-4">
+                    <input type="radio" name="Period" value="0-30"/><label class="control-label radio-inline">0-30</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="radio" name="Period" value="31-60"/><label class="control-label radio-inline">31-60</label>
+                </div>
+                <div class="col-md-4">
+                    <input type="radio" name="Period" value="61-90"/><label class="control-label radio-inline">61-90</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary" onclick="searchInvoices()"><i class="fa fa-search"></i> Search</button>
+            </div>
+           
+        </div>
+</form>
+
+    <table id="invoices-grid" class="table table-condensed table-hover table-striped">
+        <thead>
+        <tr>
+            <th data-column-id="id" data-type="numeric" data-visible="false" data-identifier="true" data-selection="true" selection="true">id</th>
+            <th data-column-id="number" data-width="90">Invoice #</th>
+            <th data-column-id="woNumber">Work Order #</th>
+            <th data-column-id="date" data-formatter="date" data-width="100">Invoice Date</th>
+            <th data-column-id="amount" data-formatter="decimal">Invoice Amount</th>
+            <th data-column-id="paidAmount" data-formatter="decimal">Amount Payable</th>
+            <th data-column-id="checkAmount" data-formatter="decimal">Check Amount</th>
+            <th data-column-id="checkNumber" data-width="80">Check #</th>
+            <th data-column-id="checkDate" data-formatter="date" data-width="100"> Check Received Date</th>
+            <th data-column-id="customerName">Customer</th>
+            <th data-column-id="waitingDays">Waiting Days</th>
+@if (ViewBag.StatusId == 1)
+{
+    <th data-column-id="commands" data-formatter="commands" data-sortable="false" data-width="70"></th>
+}
+        </tr>
+        </thead>
+
+    </table>
+    @if (ViewBag.StatusId == 1)
+    {
+        <div id="editModal" class="modal fade" tabindex="-1" role="dialog">
+
+            <div class="modal-dialog modal-lg full-width-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close pull-right" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h3 class="pull-left" id="title">Edit Invoice</h3>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        var invoicesGrid = null;
+        $(function() {
+            $(".date").datetimepicker({
+                format: 'm/d/Y',
+                dateFormat: 'm/d/Y',
+                timepicker: false
+            });
+            $("body").keypress(function (e) {
+                if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                    searchInvoices();
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+            invoicesGrid = $("#invoices-grid").bootgrid({
+                ajax: true,
+                url: "@Url.Action("SearchInvoices", "Invoice")",
+                columnSettings: true,
+                sorting: true,
+                post: function() {
+                    return { Params: {
+                        invoiceNumber:$("#number").val(),
+                        woNumber:$("#woNumber").val(),
+                        assignmentNumber:$("#assignmentNumber").val(),
+                        customerId:$("#customerId").val(),
+                        invoiceCustomerName : $("#invoiceCustomerName").val(),
+                    statusId :@ViewBag.StatusId,
+                    period1: $("[name='Period']:checked").val() == undefined ? null : $("[name='Period']:checked").val().split('-')[0],
+                    period2: $("[name='Period']:checked").val() == undefined ? null : $("[name='Period']:checked").val().split('-')[1],
+                    dateFrom:$("#dateFrom").val(),
+                    dateTo: $("#dateTo").val()
+                    } };
+                },
+                formatters: {
+                    "date": function (column, row) {
+                        if (row[column.id] != null)
+                            return moment(row[column.id]).format('MM/DD/YYYY');
+                    }, 
+                    "commands": function(column, row) {
+                        return bootGrid.getEditCommand(row.id);
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function() {
+                invoicesGrid.find(".command-edit").off().on("click", function() {
+                    var id = $(this).attr("data-row-id");
+                    editInvoice(id);
+                    return false;
+                });
+            });
+            
+        });
+        function searchInvoices() {
+            invoicesGrid.bootgrid("reload");
+        }
+        function editInvoice(id) {
+            $.get('@Url.Action("EditInvoice", "Invoice")' + "/" + id).done(function(html) {
+                $("#editModal .modal-body").html(html);
+                $("#editModal #title").text("Edit Invoice");
+                $("#editModal").modal("show");
+                $("#editInvoiceForm").validate();
+
+            });
+        }
+    </script>
+}

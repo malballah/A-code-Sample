@@ -1,0 +1,179 @@
+﻿<div class="page">
+    <h3 class="title">Customer Management</h3>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#customers">Customer Management</a></li>
+        <li><a data-toggle="tab" href="#users">User Management</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="customers" class="tab-pane fade in active">
+            @Html.Action("Customers")
+        </div>
+        <div id="users" class="tab-pane fade">
+            @Html.Action("Users")
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script type="text/javascript">
+        //customer
+        var currentCustomerId = null;
+        var customersGrid = null;
+        //user
+        var currentUserId = null;
+        var usersGrid = null;
+
+        $(function() {
+            customersGrid = $("#customers-grid").bootgrid({
+                ajax: true,
+                url: "@Url.Action("GetCustomers","CustomerManagement")",
+                columnSettings: true,
+                sorting: true,
+                templates: { header: bootGrid.getHeaderWithNew() },
+                formatters: {
+                    "commands": function (column, row) {
+                        return bootGrid.getEditDeleteCommand(row.id);
+                    },
+                    "assignments-link": function (column, row) {
+                        if (row.newAssignmentCount === 0)
+                            row.newAssignmentCount = "";
+                        return "<a href='@Url.Action("Index","Assignment")?CustomerId="+row.id+"&StatusId=2' class='badge'>"+row.newAssignmentCount+"</a>";
+                    }
+                }
+            }).on("loaded.rs.jquery.bootgrid", function () {
+                customersGrid.find(".command-edit").off().on("click", function () {
+                    var id = $(this).attr("data-row-id");
+                    editCustomer(id);
+                    return false;
+                }).end().find(".command-delete").off().on("click", function () {
+                    var id = $(this).attr("data-row-id");
+                    deleteCustomer(id);
+
+                }).end().parent().find(".command-new").off().on("click", function () {
+                    createCustomer();
+                });
+            });
+            //user 
+            usersGrid = $("#users-grid").bootgrid({
+                ajax: true,
+                url: "@Url.Action("GetUsers","UserManagement")",
+                columnSettings: true,
+            sorting: true,
+            templates: { header: bootGrid.getHeaderWithNew() },
+            formatters: {
+                "commands": function (column, row) {
+                    return bootGrid.getEditDeleteCommand(row.id);
+                }
+            }
+        }).on("loaded.rs.jquery.bootgrid", function () {
+            usersGrid.find(".command-edit").off().on("click", function () {
+                var id = $(this).attr("data-row-id");
+                editUser(id);
+                return false;
+            }).end().find(".command-delete").off().on("click", function () {
+                var id = $(this).attr("data-row-id");
+                deleteUser(id);
+
+            }).end().parent().find(".command-new").off().on("click", function () {
+                createUser();
+            });
+        });
+        //acions
+        function editUser(id) {
+            $.get('@Url.Action("Edit","UserManagement")' + "/" + id).done(function(html) {
+                $("#editUserModal .modal-body").html(html);
+                $("#editUserModal #title").text("Edit User");
+                $("#editUserModal").modal("show");
+                $("#editUserForm").validate();
+            });
+        }
+        function createUser() {
+            $.get('@Url.Action("Edit","UserManagement")' ).done(function (html) {
+                $("#editUserModal .modal-body").html(html);
+                $("#editUserModal #title").text("Create User");
+                $("#editUserModal").modal("show");
+                $("#editUserForm").validate();
+            });
+        }
+        function deleteUser(id) {
+            currentUserId = id;
+            $("#deleteUserModal").modal("show");
+        }
+            //acions
+            function editCustomer(id) {
+                $.get('@Url.Action("Edit","CustomerManagement")' + "/" + id).done(function(html) {
+                    $("#editCustomerModal .modal-body").html(html);
+                    $("#editCustomerModal #title").text("Edit Customer");
+                    $("#editCustomerModal").modal("show");
+                    $("#editCustomerForm").validate();
+                });
+            }
+            function createCustomer() {
+                $.get('@Url.Action("Edit","CustomerManagement")' ).done(function (html) {
+                    $("#editCustomerModal .modal-body").html(html);
+                    $("#editCustomerModal #title").text("Create Customer");
+                    $("#editCustomerModal").modal("show");
+                    $("#editCustomerForm").validate();
+                });
+            }
+            function deleteCustomer(id) {
+                currentCustomerId = id;
+                $("#deleteCustomerModal").modal("show");
+            }
+        });
+        
+        function saveCustomer() {
+            if (!$("#editCustomerForm").valid())
+                return;
+            $.post('@Url.Action("Edit","CustomerManagement")', $("#editCustomerForm").serialize()).done(function (result) {
+                if (result.error ===undefined) {
+                    $("#id").val(result.id);
+                    $("#editCustomerModal").modal("hide");
+                    customersGrid.bootgrid('reload');
+
+                }
+                else if (result.error != undefined) {
+                    toastr.error(result.error);
+                }
+
+            });
+        }
+
+        function processDeleteCustomer() {
+            $.post('@Url.Action("Delete","CustomerManagement")' + "/" + currentCustomerId).done(function(result) {
+                if (result.done === 1) {
+                    customersGrid.bootgrid('reload');
+                } else {
+                    toastr.error(result.error);
+                }
+            });
+        }
+        //user
+        function saveUser() {
+            if (!$("#editUserForm").valid())
+                return;
+            $.post('@Url.Action("Edit","UserManagement")', $("#editUserForm").serialize()).done(function (result) {
+                if (result.done === 1) {
+                    $("#id").val(result.id);
+                    $('#error').html('').hide();
+                    $("#editUserModal").modal("hide");
+                    usersGrid.bootgrid('reload');
+
+                }
+                else if (result.error != undefined) {
+                    toastr.error(result.error);
+                }
+
+            });
+        }
+
+        function processDeleteUser() {
+            $.post('@Url.Action("Delete","UserManagement")' + "/" + currentUserId).done(function (result) {
+                if (result.done === 1) {
+                    usersGrid.bootgrid('reload');
+                } else {
+                    toastr.error(result.error);
+                }
+            });
+        }
+    </script>
+}
