@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Store.Web.ViewModels.PCViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2 class="text-center">Configured PCs</h2>
+
+<p>
+    <a class="btn btn-primary" href="@Url.Action("Create", "PC")">Create New PC</a>
+</p>
+<table id="pc-grid" class="table table-condensed table-hover table-striped">
+    <thead>
+    <tr>
+
+        <th data-column-id="customerName">Customer</th>
+        <th data-column-id="motherboard">Motherboard</th>
+        <th data-column-id="memoryAmount">Amount of Memory</th>
+        <th data-column-id="powerSupply">power Supply</th>
+        <th data-column-id="assemblyNeeded" data-formatter="checkbox" data-sortable="false">Assembly Needed</th>
+        <th data-column-id="totalPrice">Total Price</th>
+        <th data-column-id="id" data-formatter="commands" data-sortable="false"></th>
+    </tr>
+    </thead>
+</table>
+
+<!-- Modal -->
+<div id="confirmDeleteModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Confirm Delete</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this PC.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button> |
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts{
+    <script type="text/javascript">
+        $(function() {
+            $("#pc-grid").bootgrid({
+                ajax: true,
+                post: {id:1000},
+                url: "/api/PCAPI/AllPCs",
+                formatters: {
+                    "checkbox": function(column, row) {
+                        if (row.assemblyNeeded)
+                            return "<input type='checkbox' disabled='disabled' checked='checked'/>";
+                        return "<input type='checkbox' disabled='disabled'/>";
+                    },
+                    "commands": function(column, row) {
+                        return "<button type='button' class='btn btn-danger' data-row-id='" + row.id + "' onClick='deletePC(" + row.id + ")'><i  class='glyphicon glyphicon-trash'></i></button>" +
+                            "|<a class='btn btn-primary' data-row-id='" + row.id + "' href='@Url.Action("Edit", "PC")/" + row.id + "' ><i  class='glyphicon glyphicon-edit'></i></button>";
+                    }
+                }
+            });
+        })
+        var deleteItemId;
+
+        function confirmDelete() {
+            $.post("/api/PCAPI/DeletePC/" + deleteItemId).done(function(response) {
+                $("#confirmDeleteModal").modal("hide");
+                deleteItemId = null;
+                $("#pc-grid").bootgrid('reload');
+                toastr.success("PC deleted successfully", "Deleted successfully");
+
+            }).fail(function(response) {
+                toastr.error("An error has been occurred", "Error occurred");
+            });
+        }
+
+        function deletePC(id) {
+            deleteItemId = id;
+            $("#confirmDeleteModal").modal();
+        }
+    </script>
+}

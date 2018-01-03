@@ -1,0 +1,107 @@
+[
+     {
+         "id":1,
+        "groupId":"1",
+        "question":"Your full name?",
+        "tooltip":"Type your full name",
+        "value":"",
+        "controlType":"textbox",
+        "order":1,
+        "required":true
+    }
+    ,
+    {
+        "id":2,
+        "groupId":"1",
+        "question":"How old are you?",
+        "tooltip":"Type your age",
+        "value":"",
+        "controlType":"textbox",
+        "order":3,
+        "required":true
+    },
+    {
+        "id":3,
+        "groupId":"2",
+        "question":"Gender?",
+        "tooltip":"Male or Female",
+        "value":"male",
+        "controlType":"dropdown",
+        "order":2,
+        "required":false,
+        "options":[
+            {"key":"male","value":"Male"},
+            {"key":"female","value":"Female"}
+        ]
+    },
+     {
+         "id":4,
+         "groupId":"2",
+        "question":"Employed?",
+        "tooltip":"Are you an employee?",
+        "value":false,
+        "controlType":"checkbox",
+        "order":4,
+        "required":false
+    } ,
+    {
+        "id":5,
+        "groupId":"2",
+        "question":"Descripe your self",
+        "tooltip":"Type note about your self",
+        "value":"",
+        "controlType":"textarea",
+        "order":5,
+        "required":true
+    }, 
+    {
+        "id":6,
+        "groupId":"3",
+        "question":"Marital status",
+        "tooltip":"Your marital status",
+        "value":"single",
+        "controlType":"radiobuttonlist",
+        "order":6,
+        "required":true,
+        "options":[
+            {"key":"single","value":"Single"},
+            {"key":"married","value":"Married"}
+        ]
+    },
+    {
+        "id":7,
+        "groupId":"2",
+        "parentId":4,
+         "parentValue":true,
+        "question":"Company Name",
+        "tooltip":"Type your company name",
+        "value":"",
+        "controlType":"textbox",
+        "order":1,
+        "required":true
+        },
+        {
+            "id":8,
+            "groupId":"3",
+            "parentId":6,
+         "parentValue":"married",
+        "question":"How many children?",
+        "tooltip":"Number of your childs",
+        "value":"",
+        "controlType":"textbox",
+        "order":1,
+        "required":false
+        },
+              {
+            "id":9,
+            "groupId":"3",
+            "parentId":8,
+         "parentValue":"1",
+        "question":"Children names?",
+         "tooltip":"Type children names",
+        "value":"",
+        "controlType":"textarea",
+        "order":1,
+        "required":false
+        }
+]

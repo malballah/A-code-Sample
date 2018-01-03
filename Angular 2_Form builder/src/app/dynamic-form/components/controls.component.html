@@ -1,0 +1,8 @@
+<div class="control-templates col-md-3" >
+    <ul class="controls" >
+        <li *ngFor="let controlType of controlTypes" [dragula]='"bag-one"' (click)="addControl(controlType)">
+            <i class="icon"></i>
+            <span>{{controlType.title}}</span>
+        </li>
+    </ul>
+</div>

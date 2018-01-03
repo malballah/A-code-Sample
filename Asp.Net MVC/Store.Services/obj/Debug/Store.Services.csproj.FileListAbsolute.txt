@@ -1,0 +1,11 @@
+D:\Freelance\Test\Store\Store.Services\obj\Debug\Store.Services.csprojResolveAssemblyReference.cache
+D:\Freelance\Test\Store\Store.Services\bin\Debug\Store.Services.dll
+D:\Freelance\Test\Store\Store.Services\bin\Debug\Store.Services.pdb
+D:\Freelance\Test\Store\Store.Services\bin\Debug\Store.Core.dll
+D:\Freelance\Test\Store\Store.Services\bin\Debug\Store.Data.dll
+D:\Freelance\Test\Store\Store.Services\bin\Debug\EntityFramework.dll
+D:\Freelance\Test\Store\Store.Services\bin\Debug\Store.Core.pdb
+D:\Freelance\Test\Store\Store.Services\bin\Debug\Store.Data.pdb
+D:\Freelance\Test\Store\Store.Services\bin\Debug\EntityFramework.xml
+D:\Freelance\Test\Store\Store.Services\obj\Debug\Store.Services.dll
+D:\Freelance\Test\Store\Store.Services\obj\Debug\Store.Services.pdb

@@ -1,0 +1,8 @@
+  <form [formGroup]="form" class="form-horizontal">
+    <tabset type="pills">
+    <tab heading="{{group.name}}" *ngFor="let group of questionGroups;let i=index" [disabled]="!isGroupValid(i)">
+        <df-question-group [groupQuestion]="group" >
+      </df-question-group>  
+    </tab>
+    </tabset>
+  </form>

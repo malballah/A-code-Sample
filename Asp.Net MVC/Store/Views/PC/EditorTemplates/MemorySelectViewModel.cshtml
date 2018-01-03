@@ -1,0 +1,13 @@
+﻿@model Store.Web.ViewModels.MemorySelectViewModel
+<div class="form-inline form-group">
+    @Html.HiddenFor(model => model.Id)
+    @Html.HiddenFor(model => model.Name)
+    <div class="col-sm-2">
+        @Html.EditorFor(model => model.IsSelected)
+        @Html.LabelFor(model => model.IsSelected, Model.Name)
+    </div>
+    <div class="col-sm-2">
+        @Html.TextBoxFor(model => model.Count, htmlAttributes: new { @class = "form-control", type = "number", required = "" })
+        </div>
+    </div>
+

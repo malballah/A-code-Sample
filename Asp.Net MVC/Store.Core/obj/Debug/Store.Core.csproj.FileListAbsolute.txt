@@ -1,0 +1,4 @@
+D:\Freelance\Test\Store\Store.Core\bin\Debug\Store.Core.dll
+D:\Freelance\Test\Store\Store.Core\bin\Debug\Store.Core.pdb
+D:\Freelance\Test\Store\Store.Core\obj\Debug\Store.Core.dll
+D:\Freelance\Test\Store\Store.Core\obj\Debug\Store.Core.pdb

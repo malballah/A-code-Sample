@@ -1,0 +1,33 @@
+<div class="control-settings col-md-3">
+<div class="settings">
+    <label >Name</label>
+    <input type="text" name="name" class="form-control" [(ngModel)]="webControl.control.name"  />
+
+<label >Label</label>
+    <input type="text" name="label" class="form-control" value="{{webControl.control.label}}" [(ngModel)]="webControl.control.label"  />
+<label >ToolTip</label>
+    <input type="text" name="tooltip" class="form-control" [(ngModel)]="webControl.control.tooltip"  />
+    <label >Default Value</label>
+    <div class="">
+        <input *ngIf="webControl.control.controlType.type=='textbox'||webControl.control.controlType.type=='dropdown'||webControl.control.controlType.type=='textarea'||webControl.control.controlType.type=='emailbox'||webControl.control.controlType.type=='radiobuttonlist'" type="text" name="value" class="form-control" [(ngModel)]="webControl.control.value"  />
+        <textarea rows="3" *ngIf="webControl.control.controlType.type=='textareabox'" name="value" class="form-control" [(ngModel)]="webControl.control.value"  ></textarea>
+        <input *ngIf="webControl.control.controlType.type=='numberbox'" type="number" name="value" class="form-control" [(ngModel)]="webControl.control.value"  />
+        <input *ngIf="webControl.control.controlType.type=='checkbox'" type="checkbox" name="value" [(ngModel)]="webControl.control.value"  />
+    </div> 
+    <div class="required" *ngIf="webControl.control.controlType.type=='textbox'||webControl.control.controlType.type=='dropdown'||webControl.control.controlType.type=='textarea'||webControl.control.controlType.type=='radiobuttonlist'">
+ <label >Required</label>
+ <div>
+ <input  type="checkbox" name="required" [(ngModel)]="webControl.control.required"  />
+ </div>
+          
+    </div> 
+  
+    <div *ngIf="isListControl()">
+  <label >Options</label>
+    <textarea rows="5" name="options" (keypress)="optionsListKeyPress($event)" class="form-control" value="{{webControl.optionString}}" (change)="webControl.optionsChanged($event.target.value)" ></textarea>
+    </div>
+   
+   
+    </div>
+
+</div>

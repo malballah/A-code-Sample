@@ -1,0 +1,7 @@
+<fieldset class="group" [dragula]='"bag-one"' (click)="activate()">
+  <legend [textContent]="webGroup.group.title" (input)="webGroup.group.title=$event.target.textContent" contenteditable="true">{{webGroup.group.title}}</legend>
+   <div *ngFor="let webControl of webGroup.webControls" class="control-container" [class.active]="webControl.isActive" (click)="activateControl($event,webControl)">
+      <webcontrol [webControl]="webControl" [form]="form" >
+      </webcontrol>                   
+    </div>
+</fieldset>

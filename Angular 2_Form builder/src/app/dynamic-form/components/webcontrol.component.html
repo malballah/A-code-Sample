@@ -1,0 +1,50 @@
+
+<div>
+  
+<div [formGroup]="form"  class="form-group" [class.has-error]="invalid" [class.has-success]="valid">
+ <label class="control-label col-md-4 col-sm-12" contenteditable="true" data-placeholder="Edit Label" title="Click to edit label"
+        [textContent]="webControl.control.label" (input)="webControl.control.label=$event.target.textContent" >{{webControl.control.label}}</label>
+
+  <div [ngSwitch]="webControl.control.controlType.type" class="col-md-6">
+
+    <input [popover]="webControl.control.tooltip" triggers="focus" *ngSwitchCase="'textbox'" [formControlName]="webControl.uqId" class="form-control"
+            [id]="webControl.uqId" type="text" [(ngModel)]="webControl.control.value">
+
+            <input [popover]="webControl.control.tooltip" triggers="focus" *ngSwitchCase="'emailbox'" [formControlName]="webControl.uqId" class="form-control"
+            [id]="webControl.uqId" type="email" [(ngModel)]="webControl.control.value">
+
+      <input [popover]="webControl.control.tooltip" triggers="focus" *ngSwitchCase="'numberbox'" [formControlName]="webControl.uqId" class="form-control"
+            [id]="webControl.uqId" type="number" [(ngModel)]="webControl.control.value">
+
+             <input [popover]="webControl.control.tooltip" triggers="focus" *ngSwitchCase="'datebox'" [formControlName]="webControl.uqId" class="form-control"
+            [id]="webControl.uqId" type="text" [(ngModel)]="webControl.control.value">
+
+    <select [popover]="webControl.control.tooltip" [id]="webControl.uqId" *ngSwitchCase="'dropdown'" [(ngModel)]="webControl.control.value" [formControlName]="webControl.uqId" class="form-control">
+      <option *ngFor="let opt of webControl.control.options" [value]="opt.label">{{opt.value}}</option>
+    </select>
+
+ <input [popover]="webControl.control.tooltip" *ngSwitchCase="'checkbox'" [formControlName]="webControl.uqId"
+            [id]="webControl.uqId" type="checkbox" [(ngModel)]="webControl.control.value">
+
+             <textarea [popover]="webControl.control.tooltip" *ngSwitchCase="'textarea'" [formControlName]="webControl.uqId" rows="5" class="form-control"
+            [id]="webControl.uqId"  [(ngModel)]="webControl.control.value"></textarea>
+
+            <div *ngSwitchCase="'radiobuttonlist'">
+              <label *ngFor="let opt of webControl.control.options" class="radio-inline">
+                 <input [popover]="webControl.control.tooltip" type="radio" [checked]="opt.value === webControl.control.value" 
+                  [value]="opt.value"
+                  [formControlName]="webControl.uqId"
+                  (change)="onSelectionChange(opt.value)"/> 
+                 {{opt.value}}
+              </label>
+                
+            </div>
+  </div>
+ <div class="errorMessage" *ngIf="invalid&&!(webControl.control.controlType.type=='checkbox')">This field is required</div>
+  </div>
+
+</div>
+  <div class="child-field" *ngFor="let childWebControl of webControl.childWebControls">
+  <webcontrol   [form]="form"></webcontrol>
+   </div>
+   

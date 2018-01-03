@@ -1,0 +1,39 @@
+[
+     {
+        "key":"name",
+        "question":"Your full name?",
+        "value":"",
+        "controlType":"textbox",
+        "order":1,
+        "required":true
+    }
+    ,
+    {
+        "key":"age",
+        "question":"How old are you?",
+        "value":"",
+        "controlType":"textbox",
+        "order":3,
+        "required":true
+    },
+    {
+        "key":"gender",
+        "question":"Gender?",
+        "value":"male",
+        "controlType":"dropdown",
+        "order":2,
+        "required":false,
+        "options":[
+            {"key":"male","value":"Male"},
+            {"key":"female","value":"Female"}
+        ]
+    },
+     {
+        "key":"employed",
+        "question":"Employed?",
+        "value":true,
+        "controlType":"checkbox",
+        "order":4,
+        "required":false
+    }
+]

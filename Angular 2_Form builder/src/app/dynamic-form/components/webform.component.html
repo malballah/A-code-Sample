@@ -1,0 +1,8 @@
+<div  class="web-form col-md-6" (click)="activateForm()" [dragula]='"bag-one"'>
+    <form class="horizontal-form" >
+        <div >
+<webgroup *ngFor="let webGroup of webForm.webGroups" [webGroup] = "webGroup" ></webgroup> 
+        </div>
+            
+    </form>
+</div>

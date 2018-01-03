@@ -1,0 +1,14 @@
+<div class="formcreator">
+    <div class="action-bar">
+        <div class="actions pull-right">
+         <a class="btn btn-primary" routerLink="/formcreator/createform">New Form</a>
+        <button class="btn btn-primary"  (click)="saveForm()">Save</button>
+          <a class="btn btn-primary" routerLink="/formcreator/preview">Preview</a>
+        <a class="btn btn-primary" routerLink="/formcreator/formlist">Your Forms</a>
+        </div>       
+    </div>
+<controls (addControlEvent)=formSpace.addControl($event)></controls>
+<webform [webForm]="webForm" #formSpace></webform>
+<controlsettings [webControl]="webForm.activeWebGroup!=null?webForm.activeWebGroup.activeWebControl:null" *ngIf="webForm.activeWebGroup!=null && webForm.activeWebGroup.activeWebControl!=null"></controlsettings>
+<formsettings [webForm]="formSpace.webForm" *ngIf="formSpace.webForm.isActive"></formsettings>
+</div>
